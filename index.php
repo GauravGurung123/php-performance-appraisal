@@ -23,13 +23,13 @@
                 <!-- small box -->
                 <div class="small-box bg-info">
                   <div class="inner">
-                    <h3><?php echo $user_counts = recordCount('users') ?></h3>
-                    <p>User Registrations</p>
+                    <h3><?php echo $staff_counts = recordCount('staffs') ?></h3>
+                    <p>Users Registration</p>
                   </div>
                   <div class="icon">
                     <i class="ion ion-person-add"></i>
                   </div>
-                  <a href="users.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                  <a href="staffs.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
               </div>
 
@@ -37,13 +37,13 @@
                 <!-- small box -->
                 <div class="small-box bg-warning">
                   <div class="inner">
-                    <h3><?php echo $contact_counts = recordCount('contacts') ?></h3>
-                    <p>Contact Info</p>
+                    <h3><?php // echo $department_counts = recordCount('departments') ?></h3>
+                    <p>Departments Info</p>
                   </div>
                   <div class="icon">
                     <i class="ion ion-person-add"></i>
                   </div>
-                  <a href="contacts.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                  <a href="departments.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
               </div>
 

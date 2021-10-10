@@ -4,10 +4,10 @@
 
 <?php
 $log_action="Loggedout";
-create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
+create_log($_SERVER['REMOTE_ADDR'], $_SESSION['staff_username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
 
-$_SESSION['user_id'] = null;
-$_SESSION['username'] = null;
+$_SESSION['staff_id'] = null;
+$_SESSION['staff_username'] = null;
 $_SESSION['email'] = null;
 
 header("location: ../login.php");

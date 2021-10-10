@@ -48,7 +48,7 @@ function is_admin($username) {
 
 function username_exists($username) {
     global $connection;
-    $query = "select username from users where username = '$username'";
+    $query = "select staff_username from staffs where staff_username = '$username'";
     $result =  mysqli_query($connection, $query);
     confirm($result);
     if (mysqli_num_rows($result) > 0) {
@@ -120,7 +120,7 @@ function login_user($username, $password) {
     $username = escape($username);
     $password = escape($password);
 
-    $query = "SELECT * FROM users where username = '{$username}' OR user_email='{$username}'";
+    $query = "SELECT * FROM staffs where staff_username = '{$username}'";
     $sel_username_query = mysqli_query($connection, $query);
 
     if(!$sel_username_query) {
@@ -128,31 +128,29 @@ function login_user($username, $password) {
     }
     $db_user_password ='none';
     while ($row = mysqli_fetch_array($sel_username_query)) {
-        $db_user_id = $row['user_id'];
-        $db_username = $row['username'];
-        $db_user_password = $row['user_password'];
-        $db_user_email = $row['user_email'];
+        $db_staff_id = $row['staff_id'];
+        $db_username = $row['staff_username'];
+        $db_user_password = $row['staff_password'];
 
     }
     
     if(password_verify($password, $db_user_password)){
-        $_SESSION['user_id'] = $db_user_id;
-        $_SESSION['user_password'] = $db_user_password;
-        $_SESSION['username'] = $db_username;
-        $_SESSION['email'] = $db_user_email;
+        $_SESSION['staff_id'] = $db_staff_id;
+        $_SESSION['staff_password'] = $db_user_password;
+        $_SESSION['staff_username'] = $db_username;
         $log_action="loggedin";
-        create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
+        create_log($_SERVER['REMOTE_ADDR'], $_SESSION['staff_username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
         header("location: index.php");
         
     } else {
     // redirect("login.php");
-    echo "<div class='text-center text-danger mt-5'>username,email or password wrong</div>";
+    echo "<div class='text-center text-danger mt-5'>username or password wrong</div>";
 
     }
 }
 
 function isLoggedIn() {
-    if (isset($_SESSION['user_id'])) {
+    if (isset($_SESSION['staff_id'])) {
         return true;
     }
     return false;

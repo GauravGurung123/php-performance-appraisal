@@ -26,9 +26,9 @@ if(isset($_POST['login'])) {
               <form class="form-horizontal" action="" method="post">
                 <div class="card-body">
                   <div class="form-group row">
-                    <label for="emailusername" class="col-sm-2 col-form-label">Username/Email</label>
+                    <label for="emailusername" class="col-sm-2 col-form-label">Username</label>
                     <div class="col-sm-10">
-                      <input type="text" name="username" class="form-control" id="emailusername" placeholder="Username/Email" required>
+                      <input type="text" name="username" class="form-control" id="emailusername" placeholder="Username" required>
                     </div>
                   </div>
                   <div class="form-group row">

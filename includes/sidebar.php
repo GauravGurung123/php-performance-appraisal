@@ -29,47 +29,82 @@
         </li>
 
         <li class="nav-item">
-        <a href="#" class="nav-link">
-            <i class="nav-icon far fa-user"></i>
-            <p>
-            Users
-            <i class="fas fa-angle-left right"></i>
-            </p>
-        </a>
-        <ul class="nav nav-treeview">
-            <li class="nav-item">
-            <a href="./users.php" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>User Lists</p>
+            <a href="#" class="nav-link">
+                <i class="nav-icon far fa-user"></i>
+                <p>
+                Staffs
+                <i class="fas fa-angle-left right"></i>
+                </p>
             </a>
-            </li>
-            <li class="nav-item">
-            <a href="./add_user.php" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Add User</p>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                <a href="staffs.php" class="nav-link">
+                    <i class="fas fa-chevron-right nav-icon"></i>
+                    <p>Staff Lists</p>
+                </a>
+                </li>
+                <li class="nav-item">
+                <a href="./add_staff.php" class="nav-link">
+                    <i class="fas fa-chevron-right nav-icon"></i>
+                    <p>Add Staff</p>
+                </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="nav-icon far fa-building"></i>
+                <p>
+                Departments
+                <i class="fas fa-angle-left right"></i>
+                </p>
             </a>
-            </li>
-        </ul>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                <a href="departments.php" class="nav-link">
+                    <i class="fas fa-chevron-right nav-icon"></i>
+                    <p>Department Lists</p>
+                </a>
+                </li>
+                <li class="nav-item">
+                <a href="add_department.php" class="nav-link">
+                    <i class="fas fa-chevron-right nav-icon"></i>
+                    <p>Add Department</p>
+                </a>
+                </li>
+            </ul>
         </li>
         <li class="nav-item">
         <a href="#" class="nav-link">
-            <i class="nav-icon far fa-address-book"></i>
+            <i class="nav-icon fas fa-drafting-compass"></i>
             <p>
-            Contacts
+            Evaluation
             <i class="fas fa-angle-left right"></i>
             </p>
         </a>
         <ul class="nav nav-treeview">
             <li class="nav-item">
             <a href="contacts.php" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Contact Lists</p>
+                <i class="fas fa-chevron-right nav-icon"></i>
+                <p>Report Lists</p>
             </a>
             </li>
             <li class="nav-item">
             <a href="add_contact.php" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Add Contact</p>
+                <i class="fas fa-chevron-right nav-icon"></i>
+                <p>Self Appraisal</p>
+            </a>
+            </li>
+            <li class="nav-item">
+            <a href="add_contact.php" class="nav-link">
+                <i class="fas fa-chevron-right nav-icon"></i>
+                <p>Peer Appraisal</p>
+            </a>
+            </li>
+            <li class="nav-item">
+            <a href="add_contact.php" class="nav-link">
+                <i class="fas fa-chevron-right nav-icon"></i>
+                <p>Manager Appraisal</p>
             </a>
             </li>
         </ul>
