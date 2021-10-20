@@ -15,9 +15,9 @@
         <div class="content-header">
             <div class="container-fluid">
             <div class="row">
-                <p class="display-4">All staffs</p>
+                <p class="display-4">All departments</p>
             </div>
-            <button class="btn btn-success"><a class="text-white" href="add_staff.php">Add staff</a></button>
+            <button class="btn btn-success"><a class="text-white" href="add_department.php">Add department</a></button>
             <?php
 if(isset($_GET['source'])) {
     $source = $_GET['source']; 
@@ -29,7 +29,7 @@ switch($source) {
     // include "includes/add_user.php";
     // break;
     case 'edit_user';
-    include "includes/edit_staff.php";
+    include "includes/edit_department.php";
     break;
     case '200';
     echo "nice 200";
@@ -70,10 +70,8 @@ switch($source) {
                 <table id="example2" class="table table-bordered table-hover">
                 <thead>
                 <tr>
-                    <th>Staff ID</th>
-                    <th>Username</th>
-                    <th>Full Name</th>
-                    <th>Designation</th>
+                    <th>S.N.</th>
+                    <th>Department</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -90,29 +88,24 @@ switch($source) {
                 $page_1 = ($page * $per_page) - $per_page;
             }
 
-            $user_query_count = "SELECT * FROM staffs";
-            $do_count = mysqli_query($connection, $user_query_count);
+            $dept_query_count = "SELECT * FROM departments";
+            $do_count = mysqli_query($connection, $dept_query_count);
             $count = mysqli_num_rows($do_count);
             $count = ceil($count / $per_page);
 
-            $query = "SELECT * FROM staffs ORDER BY staff_name LIMIT $page_1, $per_page";
-            $sel_staffs = mysqli_query($connection, $query);
+            $query = "SELECT * FROM departments LIMIT $page_1, $per_page";
+            $sel_depts = mysqli_query($connection, $query);
 
-            while($row = mysqli_fetch_assoc($sel_staffs)) {
-                $staff_id = $row['staff_id'];
-                $staff_username = $row['staff_username'];
-                $staff_name = ucwords($row['staff_name']);
-                $staff_designation = ucfirst($row['staff_designation']);
+            while($row = mysqli_fetch_assoc($sel_depts)) {
+                $dept_id = $row['dept_id'];
+                $dept_name = ucwords($row['dept_name']);
 
                 echo"<tr>";
-                echo"<td>{$staff_id}</td>";
-                echo"<td>{$staff_username}</td>";
-                echo"<td>{$staff_name}</td>";
-                echo"<td>{$staff_designation}</td>";
-                echo "<td><a class='bg-primary p-1' href='users.php?source=edit_user&edit_user={$staff_id}'>Edit</a>";
-                if (!($_SESSION['staff_id']==$staff_id)){
-                echo"&nbsp; <a class='bg-danger p-1' href='staffs.php?delete={$staff_id}'>Delete</a></td>";
-                }
+                echo"<td>{$dept_id}</td>";
+                echo"<td>{$dept_name}</td>";
+                echo "<td><a class='bg-primary p-1' href='departments.php?source=edit_department&edit_department={$dept_id}'>Edit</a>";
+                echo"&nbsp; <a class='bg-danger p-1' href='departments.php?delete={$dept_id}'>Delete</a></td>";
+                
                 echo"</tr>";
         }
         ?>
@@ -168,10 +161,10 @@ switch($source) {
 <?php
 //delete users query
 if(isset($_GET['delete'])) {
-    $log_action="staff deleted";
-    $the_staff_id = mysqli_real_escape_string($connection,$_GET['delete']);
+    $log_action="department deleted";
+    $the_dept_id = mysqli_real_escape_string($connection,$_GET['delete']);
 
-    $query = "DELETE FROM staffs where staff_id = {$the_staff_id} ";
+    $query = "DELETE FROM departments where dept_id = {$the_dept_id} ";
     create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
     $del_staff_query = mysqli_query($connection, $query);
     header('Location: '.$_SERVER['PHP_SELF']);

@@ -46,7 +46,7 @@
     <link rel="stylesheet" href="plugins/daterangepicker/daterangepicker.css" />
     <!-- summernote -->
     <link rel="stylesheet" href="plugins/summernote/summernote-bs4.min.css" />
-
+    <script src="https://code.iconify.design/2/2.0.3/iconify.min.js"></script>
   </head>
   <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">

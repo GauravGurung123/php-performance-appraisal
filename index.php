@@ -37,11 +37,11 @@
                 <!-- small box -->
                 <div class="small-box bg-warning">
                   <div class="inner">
-                    <h3><?php // echo $department_counts = recordCount('departments') ?></h3>
+                    <h3><?php  echo $department_counts = recordCount('departments') ?></h3>
                     <p>Departments Info</p>
                   </div>
                   <div class="icon">
-                    <i class="ion ion-person-add"></i>
+                  <span class="iconify-inline" data-icon="openmoji:department-store" data-width="102" data-height="102"></span>
                   </div>
                   <a href="departments.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
@@ -55,7 +55,7 @@
                     <p>Logs Record</p>
                   </div>
                   <div class="icon">
-                    <i class="ion ion-person-add"></i>
+                  <span class="iconify-inline" data-icon="whh:rawaccesslogs" data-width="72" data-height="72"></span>
                   </div>
                   <a href="logs.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>

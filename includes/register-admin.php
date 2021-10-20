@@ -74,8 +74,8 @@ if(isset($_POST['create_user'])){
       $query .= "values('$username', '$fullname', '$designation', '$password')";
 
       $create_user_query = mysqli_query($connection, $query);
-    //   $log_action = "new user added";
-    // create_log($_SERVER['REMOTE_ADDR'], $username, $_SERVER['HTTP_USER_AGENT'], $log_action); 
+      $log_action = "new user added";
+    create_log($_SERVER['REMOTE_ADDR'], $username, $_SERVER['HTTP_USER_AGENT'], $log_action); 
 
       if(!$create_user_query) {
         die("QUERY Failed". mysqli_error($connection) );
@@ -100,7 +100,7 @@ var check = function() {
 
           <div class="container-fluid">
             <div class="row text-center mb-2">
-              <p class="display-4">Add User</p>
+              <p class="display-4">Add Staff</p>
             </div>
             <!-- /.row -->
 

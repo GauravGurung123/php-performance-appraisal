@@ -59,6 +59,19 @@ function username_exists($username) {
 
 }
 
+function department_exists($department) {
+    global $connection;
+    $query = "select dept_name from departments where dept_name = '$department'";
+    $result =  mysqli_query($connection, $query);
+    confirm($result);
+    if (mysqli_num_rows($result) > 0) {
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
 function email_exists($user_email) {
     global $connection;
     $query = "select user_email from users where user_email = '$user_email'";
@@ -126,7 +139,7 @@ function login_user($username, $password) {
     if(!$sel_username_query) {
         die("QUERY Failed". mysqli_error($connection) );
     }
-    $db_user_password ='none';
+    // $db_user_password ='none';
     while ($row = mysqli_fetch_array($sel_username_query)) {
         $db_staff_id = $row['staff_id'];
         $db_username = $row['staff_username'];
@@ -156,7 +169,7 @@ function isLoggedIn() {
     return false;
 }
 
-function create_log($log_ip, $log_username,$log_useragent, $log_action) {
+function create_log($log_ip, $log_username, $log_useragent, $log_action) {
     global $connection;
     $log_ip = $log_ip;
     $log_username = $log_username;
