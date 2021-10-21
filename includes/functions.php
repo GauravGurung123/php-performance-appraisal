@@ -143,6 +143,7 @@ function login_user($username, $password) {
     while ($row = mysqli_fetch_array($sel_username_query)) {
         $db_staff_id = $row['staff_id'];
         $db_username = $row['staff_username'];
+        $db_name = $row['staff_name'];
         $db_user_password = $row['staff_password'];
 
     }
@@ -151,9 +152,10 @@ function login_user($username, $password) {
         $_SESSION['staff_id'] = $db_staff_id;
         $_SESSION['staff_password'] = $db_user_password;
         $_SESSION['staff_username'] = $db_username;
+        $_SESSION['staff_name'] = $db_name;
         $log_action="loggedin";
         create_log($_SERVER['REMOTE_ADDR'], $_SESSION['staff_username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
-        header("location: index.php");
+        header("location: index.php");  
         
     } else {
     // redirect("login.php");

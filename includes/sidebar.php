@@ -84,7 +84,7 @@
         </a>
         <ul class="nav nav-treeview">
             <li class="nav-item">
-            <a href="contacts.php" class="nav-link">
+            <a href="reports.php" class="nav-link">
                 <i class="fas fa-chevron-right nav-icon"></i>
                 <p>Report Lists</p>
             </a>
