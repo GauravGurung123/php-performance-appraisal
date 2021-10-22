@@ -37,13 +37,26 @@
                 <!-- small box -->
                 <div class="small-box bg-warning">
                   <div class="inner">
-                    <h3><?php  echo $department_counts = recordCount('departments') ?></h3>
+                    <h3><?php  echo $departments_count = recordCount('departments') ?></h3>
                     <p>Departments Info</p>
                   </div>
                   <div class="icon">
                   <span class="iconify-inline" data-icon="openmoji:department-store" data-width="102" data-height="102"></span>
                   </div>
                   <a href="departments.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+              </div>
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                  <div class="inner">
+                    <h3><?php  echo $reports_count = recordCount('eval_reports') ?></h3>
+                    <p>Total Reports</p>
+                  </div>
+                  <div class="icon">
+                  <span class="iconify-inline" data-icon="mdi:account-box-multiple-outline" data-width="92" data-height="92"></span>
+                  </div>
+                  <a href="reports.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
               </div>
 

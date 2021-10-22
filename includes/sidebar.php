@@ -8,7 +8,7 @@
             class="brand-image img-circle elevation-3"
             style="opacity: 0.8"
         />
-        <span class="brand-text font-weight-light">AdminLTE 3</span>
+        <span class="brand-text font-weight-light">Dashboard</span>
         </a>
 <div class="sidebar">
     <!-- Sidebar Menu -->
@@ -21,12 +21,6 @@
     >
         <!-- Add icons to the links using the .nav-icon class
         with font-awesome or any other icon font library -->
-        <li class="nav-item menu-open">
-        <a href="index.php" class="nav-link active">
-            <i class="nav-icon fas fa-tachometer-alt"></i>
-            <p>Dashboard</p>
-        </a>
-        </li>
 
         <li class="nav-item">
             <a href="#" class="nav-link">
@@ -89,22 +83,17 @@
                 <p>Report Lists</p>
             </a>
             </li>
-            <li class="nav-item">
-            <a href="add_contact.php" class="nav-link">
-                <i class="fas fa-chevron-right nav-icon"></i>
-                <p>Self Appraisal</p>
-            </a>
-            </li>
+            
             <li class="nav-item">
             <a href="peer_appraisal.php" class="nav-link">
                 <i class="fas fa-chevron-right nav-icon"></i>
-                <p>Peer Appraisal</p>
+                <p>Performance Appraisal</p>
             </a>
             </li>
             <li class="nav-item">
-            <a href="add_contact.php" class="nav-link">
+            <a href="config.php" class="nav-link">
                 <i class="fas fa-chevron-right nav-icon"></i>
-                <p>Manager Appraisal</p>
+                <p>Config</p>
             </a>
             </li>
         </ul>

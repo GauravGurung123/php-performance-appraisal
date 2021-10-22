@@ -48,7 +48,7 @@ function is_admin($username) {
 
 function username_exists($username) {
     global $connection;
-    $query = "select staff_username from staffs where staff_username = '$username'";
+    $query = "select username from staffs where username = '$username'";
     $result =  mysqli_query($connection, $query);
     confirm($result);
     if (mysqli_num_rows($result) > 0) {
@@ -61,7 +61,21 @@ function username_exists($username) {
 
 function department_exists($department) {
     global $connection;
-    $query = "select dept_name from departments where dept_name = '$department'";
+    $query = "select name from departments where name = '$department'";
+    $result =  mysqli_query($connection, $query);
+    confirm($result);
+    if (mysqli_num_rows($result) > 0) {
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+
+function criteria_exists($criteria) {
+    global $connection;
+    $query = "select name from appraisal_criterias where name = '$criteria'";
     $result =  mysqli_query($connection, $query);
     confirm($result);
     if (mysqli_num_rows($result) > 0) {
@@ -114,9 +128,9 @@ while ($row = mysqli_fetch_array($sel_userid_query)) {
     $user_id = $row['user_id'];
 }
 
-$log_action= mysqli_real_escape_string($connection,"new User Registered");
+$action= mysqli_real_escape_string($connection,"new User Registered");
 
-create_log($username, $user_id, $log_action); 
+create_log($username, $user_id, $action); 
 
 confirm($register_user_query);
 if (mysqli_affected_rows($register_user_query = 1)) {
@@ -133,7 +147,7 @@ function login_user($username, $password) {
     $username = escape($username);
     $password = escape($password);
 
-    $query = "SELECT * FROM staffs where staff_username = '{$username}'";
+    $query = "SELECT * FROM staffs where username = '{$username}'";
     $sel_username_query = mysqli_query($connection, $query);
 
     if(!$sel_username_query) {
@@ -141,20 +155,20 @@ function login_user($username, $password) {
     }
     // $db_user_password ='none';
     while ($row = mysqli_fetch_array($sel_username_query)) {
-        $db_staff_id = $row['staff_id'];
-        $db_username = $row['staff_username'];
-        $db_name = $row['staff_name'];
-        $db_user_password = $row['staff_password'];
+        $db_id = $row['id'];
+        $db_username = $row['username'];
+        $db_name = $row['name'];
+        $db_user_password = $row['password'];
 
     }
     
     if(password_verify($password, $db_user_password)){
-        $_SESSION['staff_id'] = $db_staff_id;
-        $_SESSION['staff_password'] = $db_user_password;
-        $_SESSION['staff_username'] = $db_username;
-        $_SESSION['staff_name'] = $db_name;
-        $log_action="loggedin";
-        create_log($_SERVER['REMOTE_ADDR'], $_SESSION['staff_username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
+        $_SESSION['id'] = $db_id;
+        $_SESSION['password'] = $db_user_password;
+        $_SESSION['username'] = $db_username;
+        $_SESSION['name'] = $db_name;
+        $action="loggedin";
+        create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $action); 
         header("location: index.php");  
         
     } else {
@@ -165,21 +179,21 @@ function login_user($username, $password) {
 }
 
 function isLoggedIn() {
-    if (isset($_SESSION['staff_id'])) {
+    if (isset($_SESSION['id'])) {
         return true;
     }
     return false;
 }
 
-function create_log($log_ip, $log_username, $log_useragent, $log_action) {
+function create_log($ip, $username, $useragent, $action) {
     global $connection;
-    $log_ip = $log_ip;
-    $log_username = $log_username;
-    $log_useragent = $log_useragent;
-    $log_action = escape($log_action);
+    $ip = $ip;
+    $username = $username;
+    $useragent = $useragent;
+    $action = escape($action);
 
-    $query = "INSERT INTO logs(log_ip, log_username,log_useragent, log_action) ";
-    $query .= "VALUES('$log_ip', '$log_username','$log_useragent', '$log_action')";
+    $query = "INSERT INTO logs(ip, username,useragent, action) ";
+    $query .= "VALUES('$ip', '$username','$useragent', '$action')";
     $register_log_query = mysqli_query($connection, $query);
 
 }

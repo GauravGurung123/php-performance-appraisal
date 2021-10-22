@@ -95,23 +95,23 @@ switch($source) {
             $count = mysqli_num_rows($do_count);
             $count = ceil($count / $per_page);
 
-            $query = "SELECT * FROM staffs ORDER BY staff_name LIMIT $page_1, $per_page";
+            $query = "SELECT * FROM staffs ORDER BY name LIMIT $page_1, $per_page";
             $sel_staffs = mysqli_query($connection, $query);
 
             while($row = mysqli_fetch_assoc($sel_staffs)) {
-                $staff_id = $row['staff_id'];
-                $staff_username = $row['staff_username'];
-                $staff_name = ucwords($row['staff_name']);
-                $staff_designation = ucfirst($row['staff_designation']);
+                $id = $row['id'];
+                $username = $row['username'];
+                $name = ucwords($row['name']);
+                $designation = ucfirst($row['designation']);
 
                 echo"<tr>";
-                echo"<td>{$staff_id}</td>";
-                echo"<td>{$staff_username}</td>";
-                echo"<td>{$staff_name}</td>";
-                echo"<td>{$staff_designation}</td>";
-                echo "<td><a class='bg-primary p-1' href='users.php?source=edit_user&edit_user={$staff_id}'>Edit</a>";
-                if (!($_SESSION['staff_id']==$staff_id)){
-                echo"&nbsp; <a class='bg-danger p-1' href='staffs.php?delete={$staff_id}'>Delete</a></td>";
+                echo"<td>{$id}</td>";
+                echo"<td>{$username}</td>";
+                echo"<td>{$name}</td>";
+                echo"<td>{$designation}</td>";
+                echo "<td><a class='bg-primary p-1' href='users.php?source=edit_user&edit_user={$id}'>Edit</a>";
+                if (!($_SESSION['id']==$id)){
+                echo"&nbsp; <a class='bg-danger p-1' href='staffs.php?delete={$id}'>Delete</a></td>";
                 }
                 echo"</tr>";
         }
@@ -169,11 +169,11 @@ switch($source) {
 //delete users query
 if(isset($_GET['delete'])) {
     $log_action="staff deleted";
-    $the_staff_id = mysqli_real_escape_string($connection,$_GET['delete']);
+    $the_id = mysqli_real_escape_string($connection,$_GET['delete']);
 
-    $query = "DELETE FROM staffs where staff_id = {$the_staff_id} ";
+    $query = "DELETE FROM staffs where id = {$the_id} ";
     create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
-    $del_staff_query = mysqli_query($connection, $query);
+    $del_query = mysqli_query($connection, $query);
     header('Location: '.$_SERVER['PHP_SELF']);
     die;
 

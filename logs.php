@@ -24,8 +24,8 @@
     if(isset($_GET['submitEntry'])){
         $per_page = $_GET['show_entry'];
     }else{ $per_page = 6;}
-    $log_query_count = "SELECT * FROM logs";
-    $do_count = mysqli_query($connection, $log_query_count);
+    $query_count = "SELECT * FROM logs";
+    $do_count = mysqli_query($connection, $query_count);
     $count = mysqli_num_rows($do_count);
     ?>
         <div class="row">
@@ -63,7 +63,7 @@
                 <table id="example2" class="table table-bordered table-hover">
                 <thead>
                 <tr>
-                    <th>DateTime</th>
+                    <th>Created At</th>
                     <th>Username</th>
                     <th>IP Address</th>
                     <th>User Agent</th>
@@ -87,23 +87,23 @@
                    
                     $count = ceil($count / $per_page);
                      
-                    $query = "SELECT * FROM logs ORDER BY log_datetime DESC LIMIT $page_1, $per_page";
+                    $query = "SELECT * FROM logs ORDER BY created_at DESC LIMIT $page_1, $per_page";
                     $sel_logs = mysqli_query($connection, $query);
 
                     while($row = mysqli_fetch_assoc($sel_logs)) {
 
-                    $log_datetime = $row['log_datetime'];
-                    $log_ip = $row['log_ip'];
-                    $log_username = $row['log_username'];
-                    $log_action = $row['log_action'];
-                    $log_useragent = $row['log_useragent'];
+                    $createdAt = $row['created_at'];
+                    $ip = $row['ip'];
+                    $username = $row['username'];
+                    $action = $row['action'];
+                    $useragent = $row['useragent'];
 
                     echo "<tr>";
-                    echo "<td>$log_datetime</td>";
-                    echo "<td>$log_username</td>";
-                    echo "<td>$log_ip</td>";
-                    echo "<td>$log_useragent</td>";  
-                    echo "<td>$log_action</td>";
+                    echo "<td>$createdAt</td>";
+                    echo "<td>$username</td>";
+                    echo "<td>$ip</td>";
+                    echo "<td>$useragent</td>";  
+                    echo "<td>$action</td>";
                     }
             ?>
             </table>
@@ -134,7 +134,7 @@
                         </div> 
 <!-- ./row mt-3 -->
             </div>
-            <!-- /.card-body -->
+                <!-- /.card-body -->
         </div>
         </div>
         <!-- /.card -->

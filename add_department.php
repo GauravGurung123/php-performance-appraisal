@@ -10,7 +10,7 @@
 
 <?php
   if(isset($_POST['create_department'])){
-    $departmentName = trim($_POST['department_name']);
+    $departmentName = trim($_POST['name']);
     
   $error = [
       'departmentName'=> '',
@@ -32,14 +32,14 @@
 
   if (empty($error)) {
     
-      $query = "INSERT INTO departments(dept_name)";
+      $query = "INSERT INTO departments(name)";
       $query .= "values('$departmentName')";
 
-      $create_department_query = mysqli_query($connection, $query);
+      $create_query = mysqli_query($connection, $query);
       $log_action = "new department added";
     create_log($_SERVER['REMOTE_ADDR'], $_SESSION['staff_username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
 
-      if(!$create_department_query) {
+      if(!$create_query) {
         die("QUERY Failed". mysqli_error($connection) );
     }
 
@@ -68,7 +68,7 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="exampleDepartment">Department Name</label>
-                            <input type="text" class="form-control" id="exampleDepartment" name="department_name" placeholder="Enter department name">
+                            <input type="text" class="form-control" id="exampleDepartment" name="name" placeholder="Enter department name">
                             <small><?php echo isset($error['departmentName']) ? $error['departmentName'] : '' ?></small> 
                         </div>
                         <button type="submit" id="submit" name="create_department" class="btn btn-primary">Submit</button>
@@ -115,14 +115,14 @@
                        $sel_departments = mysqli_query($connection, $query);
            
                        while($row = mysqli_fetch_assoc($sel_departments)) {
-                           $dept_id = $row['dept_id'];
-                           $dept_name = ucfirst($row['dept_name']);
+                           $id = $row['id'];
+                           $name = ucfirst($row['name']);
                       
                     echo"<tr>";
-                      echo"<td>{$dept_id}</td>";
-                      echo"<td>{$dept_name}</td>";
-                      echo "<td><a class='bg-primary p-1' href='add_department.php?source=edit_department&edit_department={$dept_id}'>Edit</a>
-                                <a class='bg-danger p-1' href='add_department.php?delete={$dept_id}'>Delete</a></td>";
+                      echo"<td>{$id}</td>";
+                      echo"<td>{$name}</td>";
+                      echo "<td><a class='bg-primary p-1' href='add_department.php?source=edit_department&edit_department={$id}'>Edit</a>
+                                <a class='bg-danger p-1' href='add_department.php?delete={$id}'>Delete</a></td>";
                     echo"</tr>";
            
                     }?>         
@@ -148,12 +148,12 @@
   
 <?php include_once "includes/footer.php"?>
 <?php
-//delete contact query
+//delete department query
 if(isset($_GET['delete'])) {
     $log_action="department deleted";
-    $the_dept_id = mysqli_real_escape_string($connection,$_GET['delete']);
+    $the_id = mysqli_real_escape_string($connection,$_GET['delete']);
 
-    $query = "DELETE FROM departments where dept_id = {$the_dept_id} ";
+    $query = "DELETE FROM departments where id = {$the_id} ";
     create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
     $del_contact_query = mysqli_query($connection, $query);
     header('Location: '.$_SERVER['PHP_SELF']);

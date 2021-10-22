@@ -17,29 +17,10 @@
             <div class="row">
                 <p class="display-4">Performance Appraisal Reports</p>
             </div>
-            <button class="btn btn-success"><a class="text-white" href="add_staff.php">Perform Evaluation</a></button>
-            <?php
-// if(isset($_GET['source'])) {
-//     $source = $_GET['source']; 
-// } else {
-//     $source = '';
-// }
-// switch($source) {  
-    // case 'add_user';
-    // include "includes/add_user.php";
-    // break;
-//     case 'edit_user';
-//     include "includes/edit_staff.php";
-//     break;
-//     case '200';
-//     echo "nice 200";
-//     break;
-//     default:
-//     // include "users.php";
-//     break;
-// }
+            <button class="btn btn-success"><a class="text-white" href="peer_appraisal.php">Perform Evaluation</a></button>
+            
 
-?>
+
             <!-- /.row -->
         <div class="row mt-2">
         <div class="col-12">
@@ -74,13 +55,6 @@
                     <th>DateTime</th>
                     <th>Evaluator Name</th>
                     <th>Evaluatee Name</th>
-                    <th>Punctuality</th>
-                    <th>Attendance</th>
-                    <th>Accuracy</th>
-                    <th>Teamwork</th>
-                    <th>Leadership</th>
-                    <th>Communication</th>
-                    <th>Creativity</th>
                     <th>Total Score</th>
                     <th>Average Score</th>
                     <th>Remarks</th>
@@ -112,12 +86,6 @@
                 $eval_datetime = $row['eval_datetime'];
                 $evaluator_name = ucwords($row['evaluator_name']);
                 $evaluatee_name = ucfirst($row['evaluatee_name']);
-                $eval_punctuality = $row['eval_punctuality'];
-                $eval_accuracy = $row['eval_accuracy'];
-                $eval_teamwork = $row['eval_teamwork'];
-                $eval_leadership = $row['eval_leadership'];
-                $eval_communication = $row['eval_communication'];
-                $eval_creativity = $row['eval_creativity'];
                 $eval_total_score = $row['eval_total_score'];
                 $eval_score = $row['eval_score'];
                 $eval_remarks = $row['eval_remarks'];
@@ -127,20 +95,91 @@
                 echo"<td>{$eval_datetime}</td>";
                 echo"<td>{$evaluator_name}</td>";
                 echo"<td>{$evaluatee_name}</td>";
-                echo"<td>{$eval_punctuality}</td>";
-                echo"<td>{$eval_accuracy}</td>";
-                echo"<td>{$eval_teamwork}</td>";
-                echo"<td>{$eval_leadership}</td>";
-                echo"<td>{$eval_communication}</td>";
-                echo"<td>{$eval_creativity}</td>";
-                echo"<td>{$eval_total_score}</td>";
+                echo"<td><form method='get' id='myform' action='reports.php'>
+                <input type='hidden' name='show' value='{$eval_id}' />
+                <button type='submit' id='showdata' class='btn btn-sm btn-info' data-toggle='modal' 
+                data-target='#modal-lg'>{$eval_total_score}</button>
+                </form>
+                </td>";
                 echo"<td>{$eval_score}</td>";
                 echo"<td>{$eval_remarks}</td>";
                 }
                 echo"</tr>";
         ?>
+        <div class="modal fade" id="modal-lg"  tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+            <?php
+             
+                $id = $_GET['show'];
+                $query = "SELECT * FROM eval_reports WHERE eval_id = '$id' ";
+            $sel_report = mysqli_query($connection, $query);
+            confirm($sel_report);
+            if($row = mysqli_fetch_assoc($sel_report)) {
+                $eval_id = $row['eval_id'];
+                $eval_datetime = $row['eval_datetime'];
+                $evaluator_name = ucwords($row['evaluator_name']);
+                $evaluatee_name = ucwords($row['evaluatee_name']);
+                $eval_punctuality = $row['eval_punctuality'];
+                $eval_attendance = $row['eval_attendance'];
+                $eval_accuracy = $row['eval_accuracy'];
+                $eval_teamwork = $row['eval_teamwork'];
+                $eval_leadership = $row['eval_leadership'];
+                $eval_communication = $row['eval_communication'];
+                $eval_creativity = $row['eval_creativity'];
+                $eval_total_score = $row['eval_total_score'];
+                $eval_score = $row['eval_score'];
+                $eval_remarks = $row['eval_remarks'];
+            echo "
+              <h4 class='modal-title'>Performance Appraisal Report <span><small>Report ID : 00{$eval_id} || DateTime : {$eval_datetime} </small> </span></h4>
+              <button  type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+              </button>
+            </div>
+            <div class='modal-body'>";
+                echo "
+                <p>Evaluator : {$evaluator_name} || Evaluatee : {$evaluatee_name} </p>
+                <hr>
+                <p>Punctuality : {$eval_punctuality} </p>
+                <p>Attendance : {$eval_attendance} </p>
+                <p>Accuracy : {$eval_accuracy} </p>
+                <p>Teamwork : {$eval_teamwork} </p>
+                <p>Leadership : {$eval_leadership} </p>
+                <p>Communication : {$eval_communication} </p>
+                <p>Creativity : {$eval_creativity} </p>
+                <hr>
+                <p>Total Score : {$eval_total_score} || Average Score : {$eval_score} </p>
+                <hr>
+                <p>Remarks: {$eval_remarks} </P> 
+                ";
+
+                } 
+            
+            ?>
+<script>
+    window.onpageshow = function() {
+        if (typeof window.performance != "undefined"
+            && window.performance.navigation.type === 0) {
+            $('#modal-lg').modal('show');
+        }
+    }
+</script>
                 
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+      <!-- /.modal -->
+
                 </table>
+            
+
                 <div class="row mt-3">
                             <div class="col-sm-12 col-md-5">
                                 <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">

@@ -41,7 +41,7 @@
 
   if (empty($error)) {
     
-      $query = "INSERT INTO staffs(staff_username, staff_name, staff_designation, staff_password)";
+      $query = "INSERT INTO staffs(username, name, designation, password)";
       $query .= "values('$username', '$fullname', '$designation', '$password')";
 
       $create_user_query = mysqli_query($connection, $query);

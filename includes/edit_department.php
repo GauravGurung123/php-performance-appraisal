@@ -2,12 +2,12 @@
     if(isset($_GET['edit_department'])) {
         $the_department_id = $_GET['edit_department'];
 
-        $query = "SELECT * FROM departments where dept_id = $the_department_id ";
+        $query = "SELECT * FROM departments where id = $the_department_id ";
         $sel_departments_query = mysqli_query($connection, $query);
 
         while($row = mysqli_fetch_assoc($sel_departments_query)) {
-            $dept_id = $row['dept_id'];
-            $dept_name = $row['dept_name'];
+            $id = $row['id'];
+            $name = $row['name'];
         }
 
     }
@@ -34,10 +34,10 @@
         if (empty($error)) {
         
             $query = "UPDATE departments SET ";
-            $query .="dept_name = '{$departmentName}' ";
-            $query .="WHERE dept_id = {$the_department_id} ";
+            $query .="name = '{$departmentName}' ";
+            $query .="WHERE id = {$the_department_id} ";
             $log_action="department updated";
-            create_log($_SERVER['REMOTE_ADDR'], $_SESSION['staff_username'], $_SERVER['HTTP_USER_AGENT'], $log_action);
+            create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action);
 
             $update_department_query = mysqli_query($connection, $query);
             confirm($update_department_query);
@@ -53,7 +53,7 @@
             <div class="form-group">
                 <label for="exampleDepartment">Department Name</label>
                 <input type="text" class="form-control" id="exampleDepartment" name="department_name"
-                 value="<?php echo $dept_name ?>">
+                 value="<?php echo $name ?>">
                 <small><?php echo isset($error['departmentName']) ? $error['departmentName'] : '' ?></small> 
             </div>
             <button type="submit" name="edit_department" class="btn btn-primary">Update</button>

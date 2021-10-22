@@ -88,8 +88,8 @@ switch($source) {
                 $page_1 = ($page * $per_page) - $per_page;
             }
 
-            $dept_query_count = "SELECT * FROM departments";
-            $do_count = mysqli_query($connection, $dept_query_count);
+            $query_count = "SELECT * FROM departments";
+            $do_count = mysqli_query($connection, $query_count);
             $count = mysqli_num_rows($do_count);
             $count = ceil($count / $per_page);
 
@@ -97,14 +97,14 @@ switch($source) {
             $sel_depts = mysqli_query($connection, $query);
 
             while($row = mysqli_fetch_assoc($sel_depts)) {
-                $dept_id = $row['dept_id'];
-                $dept_name = ucwords($row['dept_name']);
+                $id = $row['id'];
+                $name = ucwords($row['name']);
 
                 echo"<tr>";
-                echo"<td>{$dept_id}</td>";
-                echo"<td>{$dept_name}</td>";
-                echo "<td><a class='bg-primary p-1' href='departments.php?source=edit_department&edit_department={$dept_id}'>Edit</a>";
-                echo"&nbsp; <a class='bg-danger p-1' href='departments.php?delete={$dept_id}'>Delete</a></td>";
+                echo"<td>{$id}</td>";
+                echo"<td>{$name}</td>";
+                echo "<td><a class='bg-primary p-1' href='departments.php?source=edit_department&edit_department={$id}'>Edit</a>";
+                echo"&nbsp; <a class='bg-danger p-1' href='departments.php?delete={$id}'>Delete</a></td>";
                 
                 echo"</tr>";
         }
@@ -159,14 +159,14 @@ switch($source) {
 
 <?php include "includes/footer.php" ?>
 <?php
-//delete users query
+//delete department query
 if(isset($_GET['delete'])) {
     $log_action="department deleted";
-    $the_dept_id = mysqli_real_escape_string($connection,$_GET['delete']);
+    $the_id = mysqli_real_escape_string($connection,$_GET['delete']);
 
-    $query = "DELETE FROM departments where dept_id = {$the_dept_id} ";
+    $query = "DELETE FROM departments where id = {$the_id} ";
     create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
-    $del_staff_query = mysqli_query($connection, $query);
+    $del_query = mysqli_query($connection, $query);
     header('Location: '.$_SERVER['PHP_SELF']);
     die;
 
