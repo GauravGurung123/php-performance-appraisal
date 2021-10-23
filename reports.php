@@ -52,12 +52,23 @@
                 <thead>
                 <tr>
                     <th>Report ID</th>
-                    <th>DateTime</th>
+                    <th>Created At</th>
                     <th>Evaluator Name</th>
                     <th>Evaluatee Name</th>
+                    <?php
+                    global $head_id;
+                    $query = "SELECT * from appraisal_criterias";
+                    $criterias = mysqli_query($connection, $query);
+                    while($row = mysqli_fetch_assoc($criterias)) {
+                        $head_id = $row['id'];
+                        $names = ucwords($row['name']);
+                        echo "<th>{$names}</th>";
+                    }
+            ?>
                     <th>Total Score</th>
                     <th>Average Score</th>
                     <th>Remarks</th>
+                    
                 </tr>
                 </thead>
                 <tbody>
@@ -73,110 +84,84 @@
                 $page_1 = ($page * $per_page) - $per_page;
             }
 
-            $report_query_count = "SELECT * FROM eval_reports";
+            $report_query_count = "SELECT DISTINCT report_id FROM reports";
+            $group_count = "SELECT COUNT(report_id) FROM `reports` GROUP BY report_id LIMIT 1";
+            $group_count = mysqli_query($connection, $group_count);
             $do_count = mysqli_query($connection, $report_query_count);
             $count = mysqli_num_rows($do_count);
             $count = ceil($count / $per_page);
 
-            $query = "SELECT * FROM eval_reports ORDER BY eval_datetime LIMIT $page_1, $per_page";
+            $query = "SELECT  report_id,evaluator_id, evaluatee_id, created_at FROM reports GROUP BY report_id";
             $sel_reports = mysqli_query($connection, $query);
 
             while($row = mysqli_fetch_assoc($sel_reports)) {
-                $eval_id = $row['eval_id'];
-                $eval_datetime = $row['eval_datetime'];
-                $evaluator_name = ucwords($row['evaluator_name']);
-                $evaluatee_name = ucfirst($row['evaluatee_name']);
-                $eval_total_score = $row['eval_total_score'];
-                $eval_score = $row['eval_score'];
-                $eval_remarks = $row['eval_remarks'];
+                
+                // $id = $row['id'];
+                $reportId = $row['report_id'];
+         
+
+                $a1 = $row['evaluator_id'];
+                $a2 = $row['evaluatee_id'];
+
+               
+                // $score = $row['score'];
+                // $remark = $row['remark'];
+                $created_at = $row['created_at'];
+
+                
 
                 echo"<tr>";
-                echo"<td>{$eval_id}</td>";
-                echo"<td>{$eval_datetime}</td>";
-                echo"<td>{$evaluator_name}</td>";
-                echo"<td>{$evaluatee_name}</td>";
+                echo"<td>{$reportId}</td>";
+                // echo"<td>{$count}</td>";
+
+                echo"<td>{$created_at}</td>";
+
+                 for($i=1;$i<3;$i++){
+                $var = "a".$i;
+                $q3 ="select username from staffs where id='".${$var}."'";
+                $results = mysqli_query($connection,$q3);
+                while($rows1=mysqli_fetch_assoc($results)){
+
+                    echo"<td>{$rows1['username']}</td>";
+
+                }
+            }
+
+                $q2 = "select remark,score from reports where report_id = '$reportId' ";
+                $val= mysqli_query($connection,$q2);
+                while($rows=mysqli_fetch_assoc($val)){
+                    // $p = $rows['criteria_id'];
+                    $q= $rows['score'];
+                    $r = $rows['remark'];
+
+                    ?>
+
+                    <td><?php echo $q ;?><br>(<small> <?php echo $r ;?> </small> )</td>
+                    
+
+                    
+                    <?php
+                }
+                
+                $q3 = "select sum(score) as total, AVG(score) as avg from reports where report_id = '$reportId' ";
+                $val2= mysqli_query($connection,$q3);
+                
+                if ($rows = mysqli_fetch_assoc($val2)) {
+                    $total  = $rows['total'];
+                    $avg  = round($rows['avg']);
                 echo"<td><form method='get' id='myform' action='reports.php'>
-                <input type='hidden' name='show' value='{$eval_id}' />
+                <input type='hidden' name='show' value='id' />
                 <button type='submit' id='showdata' class='btn btn-sm btn-info' data-toggle='modal' 
-                data-target='#modal-lg'>{$eval_total_score}</button>
+                data-target='#modal-lg'>{$total}</button>
                 </form>
                 </td>";
-                echo"<td>{$eval_score}</td>";
-                echo"<td>{$eval_remarks}</td>";
+                echo"<td>{$avg}</td>";
+                echo"<td>{remark}</td>";
                 }
+            }
                 echo"</tr>";
         ?>
-        <div class="modal fade" id="modal-lg"  tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-            <?php
-             
-                $id = $_GET['show'];
-                $query = "SELECT * FROM eval_reports WHERE eval_id = '$id' ";
-            $sel_report = mysqli_query($connection, $query);
-            confirm($sel_report);
-            if($row = mysqli_fetch_assoc($sel_report)) {
-                $eval_id = $row['eval_id'];
-                $eval_datetime = $row['eval_datetime'];
-                $evaluator_name = ucwords($row['evaluator_name']);
-                $evaluatee_name = ucwords($row['evaluatee_name']);
-                $eval_punctuality = $row['eval_punctuality'];
-                $eval_attendance = $row['eval_attendance'];
-                $eval_accuracy = $row['eval_accuracy'];
-                $eval_teamwork = $row['eval_teamwork'];
-                $eval_leadership = $row['eval_leadership'];
-                $eval_communication = $row['eval_communication'];
-                $eval_creativity = $row['eval_creativity'];
-                $eval_total_score = $row['eval_total_score'];
-                $eval_score = $row['eval_score'];
-                $eval_remarks = $row['eval_remarks'];
-            echo "
-              <h4 class='modal-title'>Performance Appraisal Report <span><small>Report ID : 00{$eval_id} || DateTime : {$eval_datetime} </small> </span></h4>
-              <button  type='button' class='close' data-dismiss='modal' aria-label='Close'>
-                <span aria-hidden='true'>&times;</span>
-              </button>
-            </div>
-            <div class='modal-body'>";
-                echo "
-                <p>Evaluator : {$evaluator_name} || Evaluatee : {$evaluatee_name} </p>
-                <hr>
-                <p>Punctuality : {$eval_punctuality} </p>
-                <p>Attendance : {$eval_attendance} </p>
-                <p>Accuracy : {$eval_accuracy} </p>
-                <p>Teamwork : {$eval_teamwork} </p>
-                <p>Leadership : {$eval_leadership} </p>
-                <p>Communication : {$eval_communication} </p>
-                <p>Creativity : {$eval_creativity} </p>
-                <hr>
-                <p>Total Score : {$eval_total_score} || Average Score : {$eval_score} </p>
-                <hr>
-                <p>Remarks: {$eval_remarks} </P> 
-                ";
-
-                } 
-            
-            ?>
-<script>
-    window.onpageshow = function() {
-        if (typeof window.performance != "undefined"
-            && window.performance.navigation.type === 0) {
-            $('#modal-lg').modal('show');
-        }
-    }
-</script>
-                
-            </div>
-            <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-          </div>
-          <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-      </div>
-      <!-- /.modal -->
-
+        
                 </table>
             
 

@@ -10,37 +10,40 @@
 
 <!-- peer appraiasl form -->
 <?php
-// print_r($_POST);                               
-// die();
+    
     if(isset($_POST['create_report'])){
         $evaluatorname = $_SESSION['name'];
-        $evaluateename = trim($_POST['evaluateename']);
-      
-        //
-
+        $evaluatorId = $_SESSION['id'];
+        $evaluateeId = trim($_POST['evaluateename']);
+        
         $query = "SELECT * from appraisal_criterias";
         $criterias = mysqli_query($connection, $query);
-        // confirm($sel_criterias);
+        // $totalScore = 0;
+        // $count = 0;
+        $rep_id = uniqid('r'); 
         while($row = mysqli_fetch_assoc($criterias)) {
-            // $id = $row['id'];
-            $name = ucwords($row['name']);
-            $count = intval($_POST[$name]);
+            $id = $row['id'];
+            $names = ucwords($row['name']);
+            $comment = 'comment'.$names;
+            
+            $score= intval($_POST[$names]);
+            $remark= trim($_POST[$comment]);
+            
+            $query = "INSERT INTO reports(report_id, criteria_id, evaluator_id, evaluatee_id, score, remark)";
+            $query .= "VALUES('$rep_id', '$id', '$evaluatorId', '$evaluateeId', '$score', '$remark')";
+        
+            $add_report_query = mysqli_query($connection, $query);
+        }   
+    
+        if(!$add_report_query) {
+            die("QUERY Failed". mysqli_error($connection) );
         }
-
-
-        $query = "INSERT INTO eval_reports(evaluator_name, evaluatee_name, eval_total_score, eval_score, eval_remarks)";
-        $query .= "VALUES('$evaluatorname', '$evaluateename', '$totalScore', '$avgScore', '$remark')";
-
-        $create_report_query = mysqli_query($connection, $query);
-        $log_action = "new report added";
-        create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
-
-        if(!$create_report_query) {
-        die("QUERY Failed". mysqli_error($connection) );
-        }
+        $report_action = "new report added";
+        create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $report_action); 
+       
         header('Location: '.$_SERVER['PHP_SELF']);
         die;
-        
+
     } 
 ?>
 <!-- self appraiasl form -->
@@ -142,7 +145,7 @@
                                             $name = $row['name'];
                                             $username = $row['username'];
 
-                                            echo '<option value="'. $name .'" ' . ($_SESSION['username']=='' . $username . ''  ? 'disabled="disabled"' : ''). '>' . $name .'</option>';
+                                            echo '<option value="'. $id .'" ' . ($_SESSION['username']=='' . $username . ''  ? 'disabled="disabled"' : ''). '>' . $name .'</option>';
 
                                         }
 
