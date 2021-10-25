@@ -37,7 +37,7 @@
 
       $create_query = mysqli_query($connection, $query);
       $log_action = "new department added";
-    create_log($_SERVER['REMOTE_ADDR'], $_SESSION['staff_username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
+    create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
 
       if(!$create_query) {
         die("QUERY Failed". mysqli_error($connection) );
@@ -89,9 +89,6 @@
     switch($source) {  
         case 'edit_department';
         include "includes/edit_department.php";
-        break;
-        case '200';
-        echo "nice 200";
         break;
         default:
         // include "users.php";
@@ -155,7 +152,7 @@ if(isset($_GET['delete'])) {
 
     $query = "DELETE FROM departments where id = {$the_id} ";
     create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
-    $del_contact_query = mysqli_query($connection, $query);
+    $del_department_query = mysqli_query($connection, $query);
     header('Location: '.$_SERVER['PHP_SELF']);
     die;
 

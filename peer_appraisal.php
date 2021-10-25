@@ -18,19 +18,20 @@
         
         $query = "SELECT * from appraisal_criterias";
         $criterias = mysqli_query($connection, $query);
-        // $totalScore = 0;
+        
         // $count = 0;
         $rep_id = uniqid('r'); 
         while($row = mysqli_fetch_assoc($criterias)) {
             $id = $row['id'];
+            $maximum = $row['maximum'];
             $names = ucwords($row['name']);
             $comment = 'comment'.$names;
-            
+                
             $score= intval($_POST[$names]);
             $remark= trim($_POST[$comment]);
             
-            $query = "INSERT INTO reports(report_id, criteria_id, evaluator_id, evaluatee_id, score, remark)";
-            $query .= "VALUES('$rep_id', '$id', '$evaluatorId', '$evaluateeId', '$score', '$remark')";
+            $query = "INSERT INTO reports(report_id, criteria_id, evaluator_id, evaluatee_id, score, remark, max_scale)";
+            $query .= "VALUES('$rep_id', '$id', '$evaluatorId', '$evaluateeId', '$score', '$remark', '$maximum')";
         
             $add_report_query = mysqli_query($connection, $query);
         }   
@@ -155,6 +156,7 @@
                                     </div>
                                 </div>
                                 <span class="validity"><p>rating must be in range of 1 to 10.</p></span>
+                                
                                 <?php
 
                                    $query = "SELECT * from appraisal_criterias";
@@ -163,15 +165,15 @@
                                 while($row = mysqli_fetch_assoc($sel_criterias)) {
                                     // $id = $row['id'];
                                     $name = ucwords($row['name']);
-                                    $minimum = $row['minimum'];
-                                    $maximum = $row['maximum'];
+                                    $min = $row['minimum'];
+                                    $max = $row['maximum'];
 
                                     echo "<div class='form-group row'>
                                 <label for='example{$name}' class='col-sm-6 col-form-label'>{$name}</label>
                                     <div class='col-sm-2'>
-                                    <input type='number' name='{$name}' class='form-control' 
-                                    id='example{$name}' placeholder='1 to 10' min='{$minimum}' max='{$maximum}'  required>
-                                    
+                                    <input type='number' name='{$name}' onblur='handleValue(this, {$min}, {$max})' 
+                                    class='form-control' onfocus='handleFocus(this)' min='{$min}' max='{$max}'
+                                    id='example{$name}' placeholder='{$min} to {$max}' required>
                                     </div>
                                     <label for='examplefbk{$name}' class='col-sm-6 col-form-label'>Remarks</label>
                                     <div class='col-sm-6'>
@@ -227,12 +229,14 @@
                                     confirm($sel_criterias);
                                     while($row = mysqli_fetch_assoc($sel_criterias)) {
                                         $name = $row['name'];
+                                        $min = $row['minimum'];
+                                        $max = $row['maximum'];
 
                                         echo "<div class='form-group row'>
                                         <label for='example{$name}' class='col-sm-6 col-form-label'>{$name}</label>
                                         <div class='col-sm-2'>
                                         <input type='number' name='{$name}' class='form-control' 
-                                        id='example{$name}' placeholder='1 to 10' min='1' max='10'  required>
+                                        id='example{$name}' placeholder='{$min} to {$max}' min='{$min}' max='{$max}'  required>
                                         
                                         </div>
                                         <label for='examplefbk{$name}' class='col-sm-6 col-form-label'>Remarks</label>
@@ -273,11 +277,23 @@
     <!-- /.content-header -->
 </div>
 <!-- /.content-wrapper -->
-<?php
-    print_r($_POST);                               
-// die();
-?>
-  
+
+<script>
+    
+    function handleValue(e, minimum, maximum, demo){
+        if (e.value < minimum || e.value > maximum){ 
+        e.style.borderColor = 'red';
+        // document.getElementById("demo").innerHTML = "You wrote: ";   
+
+        } else {
+            e.style.borderColor = 'green'; 
+        }
+    }
+
+    function handleFocus(ev) {
+        ev.style.borderColor = 'green';
+    }
+</script>  
 <?php include_once "includes/footer.php"?>
 
 <?php else: ?>

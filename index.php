@@ -51,7 +51,7 @@
                 <!-- small box -->
                 <div class="small-box bg-success">
                   <div class="inner">
-                    <h3><?php  echo $reports_count = recordCount('eval_reports') ?></h3>
+                    <h3><?php  echo $reports_count = recordReportCount() ?></h3>
                     <p>Total Reports</p>
                   </div>
                   <div class="icon">

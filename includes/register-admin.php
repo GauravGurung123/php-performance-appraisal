@@ -42,6 +42,8 @@ if(isset($_POST['create_user'])){
     $username = trim($_POST['username']);
     $fullname = trim($_POST['fullname']);    
     $designation = trim($_POST['designation']);    
+    // $user_role = trim($_POST['user_role']);
+    $user_role = 'superadmin';    
     $user_password = trim($_POST['password']);
     $user_confirm_password = trim($_POST['confirm_password']);
     $password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
@@ -70,8 +72,8 @@ if(isset($_POST['create_user'])){
 
   if (empty($error)) {
     
-      $query = "INSERT INTO staffs(username, name, designation, password)";
-      $query .= "values('$username', '$fullname', '$designation', '$password')";
+      $query = "INSERT INTO staffs(username, name, role, designation, password)";
+      $query .= "values('$username', '$fullname', 'superadmin', '$designation', '$password')";
 
       $create_user_query = mysqli_query($connection, $query);
       $log_action = "new user added";

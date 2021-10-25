@@ -36,7 +36,8 @@
 
                 <div class="card-tools">
                 <div class="input-group input-group-sm" style="width: 150px;">
-                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                    <input type="text" id="myInput" name="table_search" class="form-control float-right" placeholder="Search"
+                    onkeyup="searchFun()">                    
 
                     <div class="input-group-append">
                     <button type="submit" class="btn btn-default">
@@ -48,21 +49,25 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                <table id="example2" class="table table-bordered table-hover">
+                <table id="myTable" class="table table-bordered table-hover">
                 <thead>
                 <tr>
                     <th>Report ID</th>
                     <th>Created At</th>
-                    <th>Evaluator Name</th>
-                    <th>Evaluatee Name</th>
+                    <th>Evaluator UserName</th>
+                    <th>Evaluatee UserName</th>
                     <?php
-                    global $head_id;
-                    $query = "SELECT * from appraisal_criterias";
+                    $query = "SELECT DISTINCT(criteria_id) as crit_id from reports";
                     $criterias = mysqli_query($connection, $query);
                     while($row = mysqli_fetch_assoc($criterias)) {
-                        $head_id = $row['id'];
-                        $names = ucwords($row['name']);
-                        echo "<th>{$names}</th>";
+                        $critId = $row['crit_id'];
+
+                        $query = "SELECT * from appraisal_criterias WHERE id = '$critId'";
+                        $col_crit = mysqli_query($connection, $query);
+                        if($row = mysqli_fetch_assoc($col_crit)) {
+                            $names = ucwords($row['name']);
+                            echo "<th>{$names}</th>";
+                        }
                     }
             ?>
                     <th>Total Score</th>
@@ -85,8 +90,6 @@
             }
 
             $report_query_count = "SELECT DISTINCT report_id FROM reports";
-            $group_count = "SELECT COUNT(report_id) FROM `reports` GROUP BY report_id LIMIT 1";
-            $group_count = mysqli_query($connection, $group_count);
             $do_count = mysqli_query($connection, $report_query_count);
             $count = mysqli_num_rows($do_count);
             $count = ceil($count / $per_page);
@@ -94,69 +97,100 @@
             $query = "SELECT  report_id,evaluator_id, evaluatee_id, created_at FROM reports GROUP BY report_id";
             $sel_reports = mysqli_query($connection, $query);
 
-            while($row = mysqli_fetch_assoc($sel_reports)) {
-                
-                // $id = $row['id'];
+            while($row = mysqli_fetch_assoc($sel_reports)) {             
                 $reportId = $row['report_id'];
-         
-
                 $a1 = $row['evaluator_id'];
                 $a2 = $row['evaluatee_id'];
-
-               
-                // $score = $row['score'];
-                // $remark = $row['remark'];
                 $created_at = $row['created_at'];
-
-                
-
+           
                 echo"<tr>";
-                echo"<td>{$reportId}</td>";
-                // echo"<td>{$count}</td>";
-
+                echo"<td class='text-center'>{$reportId}<br><small>
+                <a class='bg-danger p-1' href='reports.php?delete={$reportId}'>del</a></small></td>";
                 echo"<td>{$created_at}</td>";
+                for($i=1;$i<3;$i++){
+                    $var = "a".$i;
+                    $q3 ="select username, name from staffs where id='".${$var}."'";
+                    $results = mysqli_query($connection,$q3);
+                    while($rows1=mysqli_fetch_assoc($results)){
 
-                 for($i=1;$i<3;$i++){
-                $var = "a".$i;
-                $q3 ="select username from staffs where id='".${$var}."'";
-                $results = mysqli_query($connection,$q3);
-                while($rows1=mysqli_fetch_assoc($results)){
+                        echo"<td>{$rows1['username']}<br>({$rows1['name']})</td>";
 
-                    echo"<td>{$rows1['username']}</td>";
-
+                    }
                 }
-            }
-
-                $q2 = "select remark,score from reports where report_id = '$reportId' ";
-                $val= mysqli_query($connection,$q2);
-                while($rows=mysqli_fetch_assoc($val)){
-                    // $p = $rows['criteria_id'];
-                    $q= $rows['score'];
-                    $r = $rows['remark'];
-
-                    ?>
-
-                    <td><?php echo $q ;?><br>(<small> <?php echo $r ;?> </small> )</td>
-                    
-
-                    
-                    <?php
-                }
+                $addCol = "SELECT COUNT(DISTINCT(criteria_id)) AS count FROM reports";
+                $res = mysqli_query($connection,$addCol);
+                while($rows=mysqli_fetch_assoc($res)){
+                    $tc =  $rows['count'];
+                    $tc1= $tc;
+                    while($tc>=1){
                 
-                $q3 = "select sum(score) as total, AVG(score) as avg from reports where report_id = '$reportId' ";
+                        $q2 = "SELECT criteria_id, remark,score FROM reports WHERE report_id = '$reportId'";
+                        $val= mysqli_query($connection,$q2);
+                        $c1=0;
+                        $c2=0;
+                            while($rows=mysqli_fetch_assoc($val)){
+                                $c1=$c1+1; 
+                                $q= $rows['score'];
+                                $r = $rows['remark'];
+                                global $g;
+                                if($g){ break; }
+                                $c2=$c2+1;
+                                
+                                echo"<td>{$q}<br>(<small>{$r}</small> )</td>";
+                                
+                            }
+                                
+                            $g=true;
+                            $tc = $tc - 1 - $c2;
+                            if(!($tc1==$c1)){
+                            echo "<td>N/A</td>";
+                            }
+                    }
+                    $g=false;
+                      
+                }
+                $q3 = "SELECT SUM(score) AS total, AVG(score) AS avg, SUM(max_scale) AS scaleScore, overall_remark FROM reports WHERE report_id = '$reportId'";
                 $val2= mysqli_query($connection,$q3);
                 
                 if ($rows = mysqli_fetch_assoc($val2)) {
                     $total  = $rows['total'];
                     $avg  = round($rows['avg']);
-                echo"<td><form method='get' id='myform' action='reports.php'>
-                <input type='hidden' name='show' value='id' />
-                <button type='submit' id='showdata' class='btn btn-sm btn-info' data-toggle='modal' 
-                data-target='#modal-lg'>{$total}</button>
-                </form>
-                </td>";
-                echo"<td>{$avg}</td>";
-                echo"<td>{remark}</td>";
+                    $scaleScore = $rows['scaleScore'];
+                    $overallRemark  = $rows['overall_remark'];
+
+                    $percentage = ($total/$scaleScore)*100;
+                    echo"<td>{$total}</td>";
+                    echo"<td>{$avg}</td>";
+                    
+                    $remarK_query = "SELECT * FROM remarks";
+                    $val3= mysqli_query($connection,$remarK_query);
+                    if ($rows = mysqli_fetch_assoc($val3)) {
+                        $twenty  = $rows['twenty'];
+                        $fourty  = $rows['fourty'];
+                        $sixty  = $rows['sixty'];   
+                        $eighty  = $rows['eighty'];
+                        $hundred  = $rows['hundred'];
+                        
+                        switch($percentage) {
+                            case ($percentage<20):
+                                echo"<td>{$twenty}</td>";
+                                break;
+                            case ($percentage>=20 && $percentage <40 ):
+                                echo"<td>{$fourty}</td>";
+                                break;
+                            case ($percentage>=40 && $percentage <60 ):
+                                echo"<td>{$sixty}</td>";
+                                break;
+                            case ($percentage>=60 && $percentage <80 ):
+                                echo"<td>{$eighty}</td>";
+                                break;
+                            default:
+                                echo"<td>{$hundred}</td>";
+                                break;
+
+                        }   
+                        
+                    }
                 }
             }
                 echo"</tr>";
@@ -210,8 +244,50 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+<script>
+    const searchFun = ()=>{
+        let filter = document.getElementById('myInput').value.toUpperCase();
+        let myTable = document.getElementById('myTable');
+        let tr = myTable.getElementsByTagName('tr');
+        var colCount = document.getElementById("myTable").rows[0].cells.length;
+
+
+        for(var ite=0; ite<tr.length; ite++){
+            let td = tr[ite].getElementsByTagName('td')[3];
+            let td2 = tr[ite].getElementsByTagName('td')[colCount - 1];
+            let td3 = tr[ite].getElementsByTagName('td')[colCount - 2];
+
+            if(td || td2 || td3) {
+                let textvalue = td.textContent || td.innerHTML;
+                let textvalue2 = td2.textContent || td2.innerHTML;
+                let textvalue3 = td3.textContent || td3.innerHTML;
+                if((textvalue.toUpperCase().indexOf(filter) > -1) || (textvalue2.toUpperCase().indexOf(filter) > -1) || (textvalue3.toUpperCase().indexOf(filter) > -1)){
+                    tr[ite].style.display ="";
+                }else {
+                    tr[ite].style.display = "none"
+                }
+            }
+        }
+    }
+</script>
 
 <?php include "includes/footer.php" ?>
+<?php
+//delete reports query
+if(isset($_GET['delete'])) {
+    $log_action="report deleted";
+    $the_id = mysqli_real_escape_string($connection,$_GET['delete']);
+
+    $query = "DELETE FROM reports where report_id = '{$the_id}'";
+    create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
+    $del_report_query = mysqli_query($connection, $query);
+    header('Location: '.$_SERVER['PHP_SELF']);
+    die;
+
+}
+
+?>
+
 
 <?php else: ?>
 <?php header("location: login.php") ?>

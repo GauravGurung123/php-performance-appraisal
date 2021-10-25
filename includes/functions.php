@@ -22,7 +22,12 @@ function recordCount($table) {
     $sel_all_post = mysqli_query($connection, $query);
     return mysqli_num_rows($sel_all_post);
 }
-
+function recordReportCount() {
+    global $connection;
+    $query = "SELECT * FROM reports GROUP BY report_id" ;
+    $sel_all_post = mysqli_query($connection, $query);
+    return mysqli_num_rows($sel_all_post);
+}
 function contactCount($id) {
     global $connection;
     $query = "select * from contacts where contact_user_id=" . $id;
