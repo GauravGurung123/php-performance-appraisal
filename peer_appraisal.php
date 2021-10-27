@@ -16,14 +16,22 @@
         $evaluatorId = $_SESSION['id'];
         $evaluateeId = trim($_POST['evaluateename']);
         
-        $query = "SELECT * from appraisal_criterias";
+        $query = "SELECT * FROM appraisal_criterias";
         $criterias = mysqli_query($connection, $query);
-        
-        // $count = 0;
-        $rep_id = uniqid('r'); 
+        $nums = mysqli_num_rows($criterias);
+        $query2 = "SELECT * FROM scales" ;
+        $sel_all_post2 = mysqli_query($connection, $query2);
+        if ($rows = mysqli_fetch_assoc($sel_all_post2)) {
+            $maxScale  = $rows['maximum'];
+            $maxScale = $maxScale;
+            $minScale  = $rows['minimum'];
+            $minScale = $minScale;
+            $maxScale = $maxScale-$minScale;
+        }
+        $rep_id = hexdec(uniqid()); 
         while($row = mysqli_fetch_assoc($criterias)) {
             $id = $row['id'];
-            $maximum = $row['maximum'];
+            
             $names = ucwords($row['name']);
             $comment = 'comment'.$names;
                 
@@ -31,11 +39,61 @@
             $remark= trim($_POST[$comment]);
             
             $query = "INSERT INTO reports(report_id, criteria_id, evaluator_id, evaluatee_id, score, remark, max_scale)";
-            $query .= "VALUES('$rep_id', '$id', '$evaluatorId', '$evaluateeId', '$score', '$remark', '$maximum')";
+            $query .= "VALUES('$rep_id', '$id', '$evaluatorId', '$evaluateeId', '$score', '$remark', '$maxScale')";
         
             $add_report_query = mysqli_query($connection, $query);
         }   
+        
+        $q3 = "SELECT SUM(score) AS total, AVG(score) AS avg, SUM(max_scale) AS scaleScore FROM reports where report_id = '$rep_id'";
+        $val2= mysqli_query($connection,$q3);
+        
     
+
+
+        if ($rows = mysqli_fetch_assoc($val2)) {
+            $total  = $rows['total'];
+            $avg  = round($rows['avg']);
+            $scaleScore = $rows['scaleScore'];
+            global $result;
+            $percentage = ($total/$scaleScore)*100;
+            $remarK_query = "SELECT * FROM remarks";    
+            $val3= mysqli_query($connection,$remarK_query);
+            if ($rows = mysqli_fetch_assoc($val3)) {
+                $twenty  = $rows['twenty'];
+                $fourty  = $rows['fourty'];
+                $sixty  = $rows['sixty'];   
+                $eighty  = $rows['eighty'];
+                $hundred  = $rows['hundred'];
+                
+                switch($percentage) {
+                    case ($percentage<20):
+                        $result = $twenty;
+                        break;
+                    case ($percentage>=20 && $percentage <40 ):
+                        $result = $fourty;
+                        break;
+                    case ($percentage>=40 && $percentage <60 ):
+                        $result = $sixty;
+                        break;
+                    case ($percentage>=60 && $percentage <80 ):
+                        $result = $eighty;
+                        break;
+                    default:
+                        $result = $hundred;
+                        break;
+
+                }   
+                
+            }
+        }
+
+        $query1 = "UPDATE reports SET ";
+        $query1 .="result = '{$result}' ";
+        $query1 .="WHERE report_id = {$rep_id} ";
+        $add_result_query = mysqli_query($connection, $query1);
+        if(!$add_result_query) {
+            die("QUERY Failed". mysqli_error($connection) );
+        }
         if(!$add_report_query) {
             die("QUERY Failed". mysqli_error($connection) );
         }
@@ -165,8 +223,12 @@
                                 while($row = mysqli_fetch_assoc($sel_criterias)) {
                                     // $id = $row['id'];
                                     $name = ucwords($row['name']);
-                                    $min = $row['minimum'];
-                                    $max = $row['maximum'];
+                                    $query = "SELECT * FROM scales";
+                                    $sel_scl = mysqli_query($connection, $query);
+                                    if($row = mysqli_fetch_assoc($sel_scl)) {
+                                        $min = $row['minimum'];
+                                        $max = $row['maximum'];
+                                    }
 
                                     echo "<div class='form-group row'>
                                 <label for='example{$name}' class='col-sm-6 col-form-label'>{$name}</label>
@@ -178,7 +240,7 @@
                                     <label for='examplefbk{$name}' class='col-sm-6 col-form-label'>Remarks</label>
                                     <div class='col-sm-6'>
                                     <input type='text' name='comment{$name}' class='form-control' 
-                                    id='examplefbk{$name}' placeholder='your remarks' required>
+                                    id='examplefbk{$name}' placeholder='your remarks'>
                                     
                                     </div>
                                     </div><hr>";
@@ -229,9 +291,12 @@
                                     confirm($sel_criterias);
                                     while($row = mysqli_fetch_assoc($sel_criterias)) {
                                         $name = $row['name'];
+                                        $query = "SELECT * FROM scales";
+                                        $sel_scl = mysqli_query($connection, $query);
+                                        if($row = mysqli_fetch_assoc($sel_scl)) {
                                         $min = $row['minimum'];
                                         $max = $row['maximum'];
-
+                                        }
                                         echo "<div class='form-group row'>
                                         <label for='example{$name}' class='col-sm-6 col-form-label'>{$name}</label>
                                         <div class='col-sm-2'>

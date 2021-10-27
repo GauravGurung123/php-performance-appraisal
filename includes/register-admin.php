@@ -41,7 +41,6 @@
 if(isset($_POST['create_user'])){
     $username = trim($_POST['username']);
     $fullname = trim($_POST['fullname']);    
-    $designation = trim($_POST['designation']);    
     // $user_role = trim($_POST['user_role']);
     $user_role = 'superadmin';    
     $user_password = trim($_POST['password']);
@@ -49,6 +48,7 @@ if(isset($_POST['create_user'])){
     $password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
   $error = [
       'username'=> '',
+      'role'=> '',
       'password'=> ''
   ];
 
@@ -57,6 +57,10 @@ if(isset($_POST['create_user'])){
   }
   if (username_exists($username)) {
     $error['username'] = 'username already exists, pick another one <hr color="red">';
+
+  }
+  if (superuser_exists($user_role)) {
+    $error['role'] = 'SuperAdmin already exists, <hr color="red">';
 
   }
 
@@ -73,7 +77,7 @@ if(isset($_POST['create_user'])){
   if (empty($error)) {
     
       $query = "INSERT INTO staffs(username, name, role, designation, password)";
-      $query .= "values('$username', '$fullname', 'superadmin', '$designation', '$password')";
+      $query .= "values('$username', '$fullname', 'superadmin', 'superadmin', '$password')";
 
       $create_user_query = mysqli_query($connection, $query);
       $log_action = "new user added";
@@ -100,12 +104,13 @@ var check = function() {
 }
 </script>
 
-          <div class="container-fluid">
-            <div class="row text-center mb-2">
-              <p class="display-4">Add Staff</p>
+          <div class="d-flex justify-content-center">
+            <div class="col col-4 mt-5 p-4 border border-dark">
+            <?php if(isset($error['role'])): ?>
+            <div class="row text-center ">
+              <p class="display-4">Add SuperAdmin</p>
             </div>
             <!-- /.row -->
-
             <form action="" method="post" autocomplete="on">
                 <div class="card-body">
                     <div class="form-group">
@@ -116,10 +121,6 @@ var check = function() {
                     <div class="form-group">
                         <label for="examplefullname">Full Name</label>
                         <input type="text" class="form-control" id="examplefullname" name="fullname" placeholder="Enter staff fullname">
-                    </div>
-                    <div class="form-group">
-                        <label for="exampleDesignation">Designation</label>
-                        <input type="text" class="form-control" id="exampleDesignation" name="designation" placeholder="Assign designation">
                     </div>
                     <div class="form-group">
                         <label for="exampleInputPassword1">Password</label>
@@ -140,9 +141,15 @@ var check = function() {
                 <!-- /.card-body -->
 
             </form>
-          </div>
-          <!-- /.container-fluid -->
+      <?php else: ?>
+        <p class="display-4">Please Contact Super Admin</p>
 
+          </div>
+          <!-- /.col col-4 -->
+          </div>
+          <!-- /.d-flex justify content center-->
+
+          <?php endif; ?>
       
 
 </body>

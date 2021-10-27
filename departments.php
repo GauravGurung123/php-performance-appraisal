@@ -17,22 +17,17 @@
             <div class="row">
                 <p class="display-4">All departments</p>
             </div>
+            <?php if(checkPermission()): ?>
             <button class="btn btn-success"><a class="text-white" href="add_department.php">Add department</a></button>
-            <?php
+            <?php endif;
 if(isset($_GET['source'])) {
     $source = $_GET['source']; 
 } else {
     $source = '';
 }
 switch($source) {  
-    // case 'add_user';
-    // include "includes/add_user.php";
-    // break;
-    case 'edit_user';
+    case 'edit_department';
     include "includes/edit_department.php";
-    break;
-    case '200';
-    echo "nice 200";
     break;
     default:
     // include "users.php";
@@ -72,7 +67,9 @@ switch($source) {
                 <tr>
                     <th>S.N.</th>
                     <th>Department</th>
+            <?php if (checkPermission()): ?>
                     <th>Action</th>
+                    <?php endif; ?>
                 </tr>
                 </thead>
                 <tbody>
@@ -103,9 +100,11 @@ switch($source) {
                 echo"<tr>";
                 echo"<td>{$id}</td>";
                 echo"<td>{$name}</td>";
+            if (is_superadmin($_SESSION['username']) || is_admin($_SESSION['username'])){
+                
                 echo "<td><a class='bg-primary p-1' href='departments.php?source=edit_department&edit_department={$id}'>Edit</a>";
                 echo"&nbsp; <a class='bg-danger p-1' href='departments.php?delete={$id}'>Delete</a></td>";
-                
+            }
                 echo"</tr>";
         }
         ?>

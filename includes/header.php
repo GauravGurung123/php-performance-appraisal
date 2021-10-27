@@ -33,6 +33,7 @@
       rel="stylesheet"
       href="plugins/icheck-bootstrap/icheck-bootstrap.min.css"
     />
+
     <!-- JQVMap -->
     <link rel="stylesheet" href="plugins/jqvmap/jqvmap.min.css" />
     <!-- Theme style -->
@@ -46,6 +47,10 @@
     <link rel="stylesheet" href="plugins/daterangepicker/daterangepicker.css" />
     <!-- summernote -->
     <link rel="stylesheet" href="plugins/summernote/summernote-bs4.min.css" />
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"> -->
+ 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="../../plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
     <script src="https://code.iconify.design/2/2.0.3/iconify.min.js"></script>
   </head>
   <body class="hold-transition sidebar-mini layout-fixed">

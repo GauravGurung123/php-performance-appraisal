@@ -15,11 +15,9 @@
         <div class="content-header">
             <div class="container-fluid">
             <div class="row">
-                <p class="display-4">Performance Appraisal Reports</p>
-                <button class="btn btn-sm btn-success m-4"><a class="text-white" href="peer_appraisal.php">New Evaluation</a></button>
+                <p>Searched Result &nbsp; <a href="reports.php" class="bg-warning">back</a></p>
             </div>
             <!-- Date range -->
-            
             <form action="search_category.php" method="post">
             <div class="row">
                 <div class="col-4">
@@ -41,7 +39,6 @@
                     <div class="form-group">
                         <label>Sort Result:</label>
                         <div class="input-group">
-                            
                         <select name="order_result" class="form-control select2" style="width: 100%;">
                         <?php 
                                 $res_query = "SELECT * FROM remarks";    
@@ -108,7 +105,7 @@
                 <table id="myTable" class="table table-bordered table-hover">
                 <thead>
                 <tr>
-                    <th>S/N</th>
+                    <th>Report ID</th>
                     <th>Created At</th>
                     <th>Evaluator</th>
                     <th>Evaluatee</th>
@@ -134,36 +131,33 @@
                 </thead>
                 <tbody>
         <?php
-            $per_page = 5;
-            if (isset($_GET['page'])) {
-                $page = $_GET['page'];
-            } else { $page = ""; }
 
-            if ($page == "" || $page == 1) {
-                $page_1 = 0;
-            } else {
-                $page_1 = ($page * $per_page) - $per_page;
+            if(isset($_POST['search'])) {
+                $orderDate = $_POST['order_date'];
+                $orderResult = $_POST['order_result'];
+
+                $toFrom = explode(' - ',$orderDate);
+                $from = $toFrom['0'];
+                $to = $toFrom['1'];
+
+                $date_query = "SELECT * FROM reports WHERE ((DATE(created_at) >= '$from' AND DATE(created_at)) <= '$to') AND (result = '$orderResult') GROUP BY report_id";
+                $search_query = mysqli_query($connection, $date_query);
+
+                if(!$search_query){
+                    die("query failed" . mysqli_error($connection));
+                }
             }
 
-            $report_query_count = "SELECT DISTINCT report_id FROM reports";
-            $do_count = mysqli_query($connection, $report_query_count);
-            $count = mysqli_num_rows($do_count);
-            $count = ceil($count / $per_page);
-
-            $query = "SELECT  report_id,evaluator_id, evaluatee_id, created_at FROM reports GROUP BY report_id ORDER BY created_at DESC";
-            $sel_reports = mysqli_query($connection, $query);
-
-            while($row = mysqli_fetch_assoc($sel_reports)) {   
-                global $sn;
-                ++$sn;          
+            while($row = mysqli_fetch_assoc($search_query)) {             
                 $reportId = $row['report_id'];
                 $reportId = trimWords($reportId);
                 $a1 = $row['evaluator_id'];
                 $a2 = $row['evaluatee_id'];
+                
                 $created_at = $row['created_at'];
                 $created_at = date("M j, Y", strtotime($created_at));
                 echo"<tr>";
-                echo"<td class='text-center'>0{$sn}<br><small>
+                echo"<td class='text-center'>{$reportId}<br><small>
                 <a class='bg-danger p-1' href='reports.php?delete={$reportId}'>del</a></small></td>";
                 echo"<td>{$created_at}</td>";
                 for($i=1;$i<3;$i++){
@@ -256,36 +250,6 @@
         ?>
         
                 </table>
-            
-
-                <div class="row mt-3">
-                            <div class="col-sm-12 col-md-5">
-                                <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
-                                    Showing 1 to 4 of 15 entries
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-7">
-                                <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
-
-                                    <ul class="pagination">
-
-<?php
-    for ($i=1; $i<=$count; $i++) {
-        if ($i == $page ){
-        echo "<li class='paginate_button page-item active'><a class='page-link active' href='reports.php?page={$i}'>{$i}</a>";
-        } else {
-        echo "<li class='paginate_button page-item'><a class='page-link' href='reports.php?page={$i}'>{$i}</a>";
-       
-        }
-    }
-?>
-  </ul>
-                                </div>
-                            </div>
-                        </div> 
-<!-- ./row mt-3 -->
-
-
             </div>
             <!-- /.card-body -->
         </div>
@@ -306,11 +270,7 @@
 <script>
   $(function () {
     //Date range picker
-    $('#reservation').daterangepicker({
-        locale: {
-            format: 'YYYY-MM-DD'
-        }    
-    })
+    $('#reservation').daterangepicker()
   });
     const searchFun = ()=>{
         let filter = document.getElementById('myInput').value.toUpperCase();
@@ -336,6 +296,35 @@
             }
         }
     }
+
+$(document).ready(function(){
+    $.datepicker.setDefaults({
+        dateFormat: 'yy-mm-dd'
+    });
+    $(function () {
+    //Date range picker
+    $('#date_from').datepicker();
+    $('#date_to').datepicker();
+    });
+    $('#filter').click(function(){
+        var date_from = $('#date_from').val();
+        var date_to = $('#date_to').val();
+
+        if(date_from != '' && date_to != '' ){
+            $.ajax({
+                url: "filter.php",
+                method: "POST",
+                data: {date_from: date_from, date_to: date_to},
+                success: function(data) {
+                    $('#date_order').html(data);
+                }
+            });
+        }else {
+            alert("Please select date");
+        }
+    });
+});
+
 </script>
 
 

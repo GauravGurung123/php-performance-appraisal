@@ -1,7 +1,11 @@
 <?php  session_start(); ?>
 <?php include "includes/dbconfig.php"; ?>
 <?php include "includes/functions.php"; ?>
+
 <?php
+if(isLoggedIn()) {
+  header("location: index.php");
+}
 if(isset($_POST['login'])) {
     login_user($_POST['username'], $_POST['password']);
 }

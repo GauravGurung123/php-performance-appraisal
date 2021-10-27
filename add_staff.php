@@ -1,5 +1,5 @@
 <?php include_once "includes/header.php" ?>
-<?php if(isLoggedIn()): ?>
+<?php if(isLoggedIn() && checkPermission()): ?>
 
 <!-- Navigation -->
 <?php include_once "includes/nav.php" ?>

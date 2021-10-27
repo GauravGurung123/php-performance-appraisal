@@ -8,7 +8,6 @@
 <?php include_once "includes/sidebar.php" ?>
 <!-- /.sidebar -->
 
-
 <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -16,18 +15,18 @@
             <div class="container-fluid">
             <div class="row">
                 <p class="display-4">All staffs</p>
+                <?php include("includes/modal_delete.php"); ?>
             </div>
+            <?php if (checkPermission()): ?>
             <button class="btn btn-success"><a class="text-white" href="add_staff.php">Add staff</a></button>
-            <?php
+            <?php endif; ?>
+<?php
 if(isset($_GET['source'])) {
     $source = $_GET['source']; 
 } else {
     $source = '';
 }
 switch($source) {  
-    // case 'add_user';
-    // include "includes/add_user.php";
-    // break;
     case 'edit_user';
     include "includes/edit_staff.php";
     break;
@@ -55,7 +54,8 @@ switch($source) {
 
                 <div class="card-tools">
                 <div class="input-group input-group-sm" style="width: 150px;">
-                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                    <input type="text" name="table_search" id="myInput" onkeyup="searchFun()"
+                    class="form-control float-right" placeholder="Search">
 
                     <div class="input-group-append">
                     <button type="submit" class="btn btn-default">
@@ -67,19 +67,21 @@ switch($source) {
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                <table id="example2" class="table table-bordered table-hover">
+                <table id="myTable" class="table table-bordered table-hover">
                 <thead>
                 <tr>
-                    <th>Staff ID</th>
+                    <th>S/N</th>
                     <th>Username</th>
                     <th>Full Name</th>
                     <th>Designation</th>
+            <?php if (checkPermission()): ?>
                     <th>Action</th>
+                    <?php endif; ?>
                 </tr>
                 </thead>
                 <tbody>
         <?php
-            $per_page = 4;
+            $per_page = 8;
             if (isset($_GET['page'])) {
                 $page = $_GET['page'];
             } else { $page = ""; }
@@ -95,24 +97,30 @@ switch($source) {
             $count = mysqli_num_rows($do_count);
             $count = ceil($count / $per_page);
 
-            $query = "SELECT * FROM staffs ORDER BY name LIMIT $page_1, $per_page";
+            $query = "SELECT * FROM staffs WHERE role <> 'superadmin' ORDER BY name LIMIT $page_1, $per_page";
             $sel_staffs = mysqli_query($connection, $query);
 
             while($row = mysqli_fetch_assoc($sel_staffs)) {
                 $id = $row['id'];
+                global $sid;
+                ++$sid;
                 $username = $row['username'];
                 $name = ucwords($row['name']);
                 $designation = ucfirst($row['designation']);
 
                 echo"<tr>";
-                echo"<td>{$id}</td>";
+                echo"<td>{$sid}</td>";
                 echo"<td>{$username}</td>";
                 echo"<td>{$name}</td>";
                 echo"<td>{$designation}</td>";
+            if (checkPermission()){
                 echo "<td><a class='bg-primary p-1' href='users.php?source=edit_user&edit_user={$id}'>Edit</a>";
                 if (!($_SESSION['id']==$id)){
-                echo"&nbsp; <a class='bg-danger p-1' href='staffs.php?delete={$id}'>Delete</a></td>";
+                // echo"&nbsp; <a class='bg-danger p-1' href='staffs.php?delete={$id}'>Delete</a></td>";
+                echo"&nbsp; <a rel='$id' class='del_link bg-danger p-1' href='javascript:void(0)'>Delete</a></td>";
                 }
+            }
+
                 echo"</tr>";
         }
         ?>
@@ -180,6 +188,44 @@ if(isset($_GET['delete'])) {
 }
 
 ?>
+<script>
+    $(document).ready(function(){
+        $(".del_link").on('click', function(){
+            var delId = $(this).attr("rel");
+            var delUrl = "staffs.php?delete="+ delId +" ";
+
+            $(".modal_del_link").attr("href", delUrl);
+
+            $("#modal-sm").modal('show');
+           
+        });
+    });
+
+    const searchFun = ()=>{
+        let filter = document.getElementById('myInput').value.toUpperCase();
+        let myTable = document.getElementById('myTable');
+        let tr = myTable.getElementsByTagName('tr');
+
+        for(var ite=0; ite<tr.length; ite++){
+            let td = tr[ite].getElementsByTagName('td')[1];
+            let td2 = tr[ite].getElementsByTagName('td')[2];
+            let td3 = tr[ite].getElementsByTagName('td')[3];
+
+            if(td || td2 || td3) {
+                let textvalue = td.textContent || td.innerHTML;
+                let textvalue2 = td2.textContent || td2.innerHTML;
+                let textvalue3 = td3.textContent || td3.innerHTML;
+                if((textvalue.toUpperCase().indexOf(filter) > -1) || (textvalue2.toUpperCase().indexOf(filter) > -1) || (textvalue3.toUpperCase().indexOf(filter) > -1)){
+                    tr[ite].style.display ="";
+                }else {
+                    tr[ite].style.display = "none"
+                }
+            }
+        }
+    }
+
+
+</script>
 <?php else: ?>
 <?php header("location: login.php") ?>
 <?php endif ?>

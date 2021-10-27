@@ -15,7 +15,7 @@
         <div class="content-header">
           <div class="container-fluid">
             <div class="row text-center mb-2">
-              <p class="display-4">Welcome Admin</p>
+              <p class="display-4">Welcome <?php echo $_SESSION['name']; ?></p>
 
             </div>
             <div class="row">
@@ -60,7 +60,7 @@
                   <a href="reports.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
               </div>
-
+              <?php if (checkPermission()): ?>
               <div class="col-lg-3 col-6">
                 <!-- small box -->
                 <div class="small-box bg-danger">
@@ -74,7 +74,7 @@
                   <a href="logs.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
               </div>
-
+                <?php endif; ?>
             </div>
             <!-- /.row -->
           </div>

@@ -22,7 +22,7 @@
         <!-- Add icons to the links using the .nav-icon class
         with font-awesome or any other icon font library -->
 
-        <li class="nav-item">
+        <li class="nav-item" >
             <a href="#" class="nav-link">
                 <i class="nav-icon far fa-user"></i>
                 <p>
@@ -37,12 +37,14 @@
                     <p>Staff Lists</p>
                 </a>
                 </li>
+                <?php if (is_superadmin($_SESSION['username']) || is_admin($_SESSION['username'])): ?>
                 <li class="nav-item">
                 <a href="./add_staff.php" class="nav-link">
                     <i class="fas fa-chevron-right nav-icon"></i>
                     <p>Add Staff</p>
                 </a>
                 </li>
+                <?php endif; ?>
             </ul>
         </li>
         <li class="nav-item">
@@ -60,12 +62,14 @@
                     <p>Department Lists</p>
                 </a>
                 </li>
+                <?php if (checkPermission()): ?>
                 <li class="nav-item">
                 <a href="add_department.php" class="nav-link">
                     <i class="fas fa-chevron-right nav-icon"></i>
                     <p>Add Department</p>
                 </a>
                 </li>
+                <?php endif ?>
             </ul>
         </li>
         <li class="nav-item">
@@ -90,20 +94,24 @@
                 <p>Performance Appraisal</p>
             </a>
             </li>
+            <?php if (checkPermission()): ?>
             <li class="nav-item">
             <a href="config.php" class="nav-link">
                 <i class="fas fa-chevron-right nav-icon"></i>
                 <p>Config</p>
             </a>
             </li>
+            <?php endif ?>
         </ul>
         </li>
+        <?php if (checkPermission()): ?>
         <li class="nav-item">
         <a href="logs.php" class="nav-link">
             <i class="nav-icon fas fa-clipboard-list"></i>
             <p>Logs</p>
         </a>
         </li>
+        <?php endif ?>
         <li class="nav-item">
         <a href="includes/logout.php" class="nav-link">
             <i class="nav-icon fas fa-sign-out-alt"></i>

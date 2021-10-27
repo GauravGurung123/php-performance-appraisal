@@ -1,5 +1,5 @@
 <?php include_once "includes/header.php" ?>
-<?php if(isLoggedIn()): ?>
+<?php if(isLoggedIn() && checkPermission()): ?>
 
 <!-- Navigation -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

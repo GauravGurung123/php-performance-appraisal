@@ -1,5 +1,4 @@
 <?php
-
 function redirect($location) {
     return header("location:" . $location);
 }
@@ -28,6 +27,22 @@ function recordReportCount() {
     $sel_all_post = mysqli_query($connection, $query);
     return mysqli_num_rows($sel_all_post);
 }
+function maxScale() {
+    global $connection;
+    $query = "SELECT * FROM appraisal_criterias" ;
+    $sel_all_post = mysqli_query($connection, $query);
+    $nums = mysqli_num_rows($sel_all_post);
+    while (!$nums==0) {
+        $query2 = "SELECT maximum FROM scales" ;
+        $sel_all_post2 = mysqli_query($connection, $query2);
+        if ($rows = mysqli_fetch_assoc($sel_all_post2)) {
+            $maxScale  = $rows['maximum'];
+
+        }
+
+    }
+}
+
 function contactCount($id) {
     global $connection;
     $query = "select * from contacts where contact_user_id=" . $id;
@@ -36,14 +51,28 @@ function contactCount($id) {
 }
 
 
-function is_admin($username) {
+function is_superadmin($username) {
     global $connection;
-    $query = "select user_role from users where username = '$username'";
+    $query = "select role from staffs where username = '$username'";
     $result =  mysqli_query($connection, $query);
     confirm($result);
 
     $row = mysqli_fetch_array($result);
-    if ($row['user_role'] == 'admin') {
+    if ($row['role'] == 'superadmin') {
+        return true;
+    }else {
+        return false;
+    }
+
+}
+function is_admin($username) {
+    global $connection;
+    $query = "select role from staffs where username = '$username'";
+    $result =  mysqli_query($connection, $query);
+    confirm($result);
+
+    $row = mysqli_fetch_array($result);
+    if ($row['role'] == 'admin') {
         return true;
     }else {
         return false;
@@ -54,6 +83,19 @@ function is_admin($username) {
 function username_exists($username) {
     global $connection;
     $query = "select username from staffs where username = '$username'";
+    $result =  mysqli_query($connection, $query);
+    confirm($result);
+    if (mysqli_num_rows($result) > 0) {
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+function superuser_exists($role) {
+    global $connection;
+    $query = "select role from staffs where role = '$role'";
     $result =  mysqli_query($connection, $query);
     confirm($result);
     if (mysqli_num_rows($result) > 0) {
@@ -158,11 +200,12 @@ function login_user($username, $password) {
     if(!$sel_username_query) {
         die("QUERY Failed". mysqli_error($connection) );
     }
-    // $db_user_password ='none';
+    $db_user_password ='none';
     while ($row = mysqli_fetch_array($sel_username_query)) {
         $db_id = $row['id'];
         $db_username = $row['username'];
         $db_name = $row['name'];
+        $db_role = $row['role'];
         $db_user_password = $row['password'];
 
     }
@@ -172,6 +215,8 @@ function login_user($username, $password) {
         $_SESSION['password'] = $db_user_password;
         $_SESSION['username'] = $db_username;
         $_SESSION['name'] = $db_name;
+        $_SESSION['role'] = $db_role;
+               
         $action="loggedin";
         create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $action); 
         header("location: index.php");  
@@ -183,6 +228,12 @@ function login_user($username, $password) {
     }
 }
 
+function checkPermission() {
+    if (($_SESSION['role']=='superadmin')|| ($_SESSION['role']=='admin')) { 
+        return true;
+    }
+    return false;
+}
 function isLoggedIn() {
     if (isset($_SESSION['id'])) {
         return true;
@@ -210,5 +261,11 @@ function console_log( $data ){
     echo '</script>';
 }
 
+function trimWords($string, $limit = 4)
+{
+    $words = explode(' ', $string);
+    return implode(' ', array_slice($words, 0, $limit));
 
+}
 ?>
+
