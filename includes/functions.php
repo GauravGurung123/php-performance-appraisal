@@ -51,28 +51,32 @@ function contactCount($id) {
 }
 
 
-function is_superadmin($username) {
+function is_superadmin($userrole) {
     global $connection;
-    $query = "select role from staffs where username = '$username'";
+    // global $row;
+    $role['role'] = "member"; 
+    $query = "SELECT roles.name as role FROM roles INNER JOIN staffs ON roles.id= '$userrole' LIMIT 1";
     $result =  mysqli_query($connection, $query);
     confirm($result);
 
     $row = mysqli_fetch_array($result);
-    if ($row['role'] == 'superadmin') {
+    if ($row===null){    }
+    else if ($row['role'] == 'superadmin') {
         return true;
     }else {
         return false;
     }
 
 }
-function is_admin($username) {
+function is_admin($userrole) {
     global $connection;
-    $query = "select role from staffs where username = '$username'";
+    $query = "SELECT roles.name as role FROM roles INNER JOIN staffs ON roles.id= '$userrole'";
     $result =  mysqli_query($connection, $query);
-    confirm($result);
+    confirm($result);   
 
     $row = mysqli_fetch_array($result);
-    if ($row['role'] == 'admin') {
+    if ($row===null){    }
+    else if ($row['role'] == 'admin') {
         return true;
     }else {
         return false;
@@ -205,7 +209,7 @@ function login_user($username, $password) {
         $db_id = $row['id'];
         $db_username = $row['username'];
         $db_name = $row['name'];
-        $db_role = $row['role'];
+        $db_role_id = $row['role_id'];
         $db_user_password = $row['password'];
 
     }
@@ -215,7 +219,7 @@ function login_user($username, $password) {
         $_SESSION['password'] = $db_user_password;
         $_SESSION['username'] = $db_username;
         $_SESSION['name'] = $db_name;
-        $_SESSION['role'] = $db_role;
+        $_SESSION['role_id'] = $db_role_id;
                
         $action="loggedin";
         create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $action); 
@@ -229,7 +233,7 @@ function login_user($username, $password) {
 }
 
 function checkPermission() {
-    if (($_SESSION['role']=='superadmin')|| ($_SESSION['role']=='admin')) { 
+    if (is_superadmin($_SESSION['role_id']) || is_admin($_SESSION['role_id'])) { 
         return true;
     }
     return false;

@@ -16,11 +16,12 @@
             <div class="container-fluid">
             <div class="row">
                 <p class="display-4">Performance Appraisal Reports</p>
+                <?php include("includes/modal_delete.php"); ?>
                 <button class="btn btn-sm btn-success m-4"><a class="text-white" href="peer_appraisal.php">New Evaluation</a></button>
             </div>
             <!-- Date range -->
             
-            <form action="search_category.php" method="post">
+            <form action="search_category.php" method="get">
             <div class="row">
                 <div class="col-4">
                     <div class="form-group">
@@ -104,8 +105,8 @@
                 </div>
             </div>
             <!-- /.card-header -->
-            <div class="card-body" id="date_order">
-                <table id="myTable" class="table table-bordered table-hover">
+            <div class="card-body" id="date_order" style="overflow: scroll"> 
+                <table id="myTable" class="table table-bordered table-hover" >
                 <thead>
                 <tr>
                     <th>S/N</th>
@@ -163,8 +164,13 @@
                 $created_at = $row['created_at'];
                 $created_at = date("M j, Y", strtotime($created_at));
                 echo"<tr>";
-                echo"<td class='text-center'>0{$sn}<br><small>
-                <a class='bg-danger p-1' href='reports.php?delete={$reportId}'>del</a></small></td>";
+                ?>
+                <td class='text-center'><?php echo $sn; ?>
+                <?php if (is_superadmin($_SESSION['username']) || is_admin($_SESSION['username'])): ?>
+                <br><small>
+                <a rel='<?php echo $reportId?>' class='del_link bg-danger p-1' href='javascript:void(0)'>del</a></small> 
+                <?php endif; ?></td>
+                <?php
                 echo"<td>{$created_at}</td>";
                 for($i=1;$i<3;$i++){
                     $var = "a".$i;
@@ -304,6 +310,18 @@
     </div>
     <!-- /.content-wrapper -->
 <script>
+$(document).ready(function(){
+    $(".del_link").on('click', function(){
+        var delIds = $(this).attr("rel");
+        var delUrls = "reports.php?delete="+ delIds +" ";
+
+        $(".modal_del_link").attr("href", delUrls);
+
+        $("#modal-sm").modal('show');
+        
+    });
+});
+
   $(function () {
     //Date range picker
     $('#reservation').daterangepicker({
@@ -345,6 +363,8 @@
 if(isset($_GET['delete'])) {
     $log_action="report deleted";
     $the_id = mysqli_real_escape_string($connection,$_GET['delete']);
+    // var_dump($the_id);
+    // exit;
 
     $query = "DELETE FROM reports where report_id = '{$the_id}'";
     create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 

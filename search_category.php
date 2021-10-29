@@ -7,8 +7,15 @@
 <!-- Sidebar -->
 <?php include_once "includes/sidebar.php" ?>
 <!-- /.sidebar -->
-
-
+<?php
+if(isset($_GET['search'])) {
+                $orderDate = $_GET['order_date'];
+                $orderResult = $_GET['order_result'];
+                
+                $toFrom = explode(' - ',$orderDate);
+                $from = $toFrom['0'];
+                $to = $toFrom['1'];
+}?>
 <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -16,6 +23,7 @@
             <div class="container-fluid">
             <div class="row">
                 <p>Searched Result &nbsp; <a href="reports.php" class="bg-warning">back</a></p>
+                <?php include("includes/modal_delete.php"); ?>
             </div>
             <!-- Date range -->
             <form action="search_category.php" method="post">
@@ -29,7 +37,7 @@
                             <i class="far fa-calendar-alt"></i>
                             </span>
                         </div>
-                        <input type="text" name = "order_date" class="form-control float-right" id="reservation">
+                        <input type="text" value="<?php echo $orderDate; ?>" name = "order_date" class="form-control float-right" id="reservation">
                         </div>
                         <!-- /.input group -->
                     </div>
@@ -50,7 +58,7 @@
                                     $eighty = $row['eighty'];
                                     $hundred = $row['hundred'];
                                     ?>
-                                    <option >-- select result --</option>';
+                                    <option ><?php echo $orderResult; ?></option>';
                                     <option value="<?php echo $twenty; ?>" ><?php echo $twenty; ?></option>';
                                     <option value="<?php echo $fourty; ?>" ><?php echo $fourty; ?></option>';
                                     <option value="<?php echo $sixty; ?>" ><?php echo $sixty; ?></option>';
@@ -101,7 +109,7 @@
                 </div>
             </div>
             <!-- /.card-header -->
-            <div class="card-body" id="date_order">
+            <div class="card-body" id="date_order"  style="overflow: scroll">
                 <table id="myTable" class="table table-bordered table-hover">
                 <thead>
                 <tr>
@@ -132,15 +140,18 @@
                 <tbody>
         <?php
 
-            if(isset($_POST['search'])) {
-                $orderDate = $_POST['order_date'];
-                $orderResult = $_POST['order_result'];
-
+            if(isset($_GET['search'])) {
+                $orderDate = $_GET['order_date'];
+                $orderResult = $_GET['order_result'];
+                
                 $toFrom = explode(' - ',$orderDate);
                 $from = $toFrom['0'];
                 $to = $toFrom['1'];
-
-                $date_query = "SELECT * FROM reports WHERE ((DATE(created_at) >= '$from' AND DATE(created_at)) <= '$to') AND (result = '$orderResult') GROUP BY report_id";
+                if(!$orderResult=='-- select result --'){
+                $date_query = "SELECT * FROM reports WHERE ((DATE(created_at) >= '$from' AND DATE(created_at)) <= '$to') AND (result = '$orderResult')  GROUP BY report_id";
+                } else {
+                $date_query = "SELECT * FROM reports WHERE DATE(created_at) >= '$from' AND DATE(created_at) <= '$to' GROUP BY report_id";
+                }
                 $search_query = mysqli_query($connection, $date_query);
 
                 if(!$search_query){
@@ -148,7 +159,9 @@
                 }
             }
 
-            while($row = mysqli_fetch_assoc($search_query)) {             
+            while($row = mysqli_fetch_assoc($search_query)) { 
+                global $sn;
+                ++$sn;            
                 $reportId = $row['report_id'];
                 $reportId = trimWords($reportId);
                 $a1 = $row['evaluator_id'];
@@ -157,8 +170,13 @@
                 $created_at = $row['created_at'];
                 $created_at = date("M j, Y", strtotime($created_at));
                 echo"<tr>";
-                echo"<td class='text-center'>{$reportId}<br><small>
-                <a class='bg-danger p-1' href='reports.php?delete={$reportId}'>del</a></small></td>";
+                ?>
+                <td class='text-center'><?php echo $sn; ?>
+                <?php if (is_superadmin($_SESSION['username']) || is_admin($_SESSION['username'])): ?>
+                <br><small>
+                <a rel='<?php echo $reportId?>' class='del_link bg-danger p-1' href='javascript:void(0)'>del</a></small> 
+                <?php endif; ?></td>
+                <?php
                 echo"<td>{$created_at}</td>";
                 for($i=1;$i<3;$i++){
                     $var = "a".$i;
@@ -268,9 +286,25 @@
     </div>
     <!-- /.content-wrapper -->
 <script>
+$(document).ready(function(){
+    $(".del_link").on('click', function(){
+        var delIds = $(this).attr("rel");
+        var delUrls = "reports.php?delete="+ delIds +" ";
+
+        $(".modal_del_link").attr("href", delUrls);
+
+        $("#modal-sm").modal('show');
+        
+    });
+});
+
   $(function () {
     //Date range picker
-    $('#reservation').daterangepicker()
+    $('#reservation').daterangepicker({
+        locale: {
+            format: 'YYYY-MM-DD'
+        }    
+    })
   });
     const searchFun = ()=>{
         let filter = document.getElementById('myInput').value.toUpperCase();
@@ -296,34 +330,6 @@
             }
         }
     }
-
-$(document).ready(function(){
-    $.datepicker.setDefaults({
-        dateFormat: 'yy-mm-dd'
-    });
-    $(function () {
-    //Date range picker
-    $('#date_from').datepicker();
-    $('#date_to').datepicker();
-    });
-    $('#filter').click(function(){
-        var date_from = $('#date_from').val();
-        var date_to = $('#date_to').val();
-
-        if(date_from != '' && date_to != '' ){
-            $.ajax({
-                url: "filter.php",
-                method: "POST",
-                data: {date_from: date_from, date_to: date_to},
-                success: function(data) {
-                    $('#date_order').html(data);
-                }
-            });
-        }else {
-            alert("Please select date");
-        }
-    });
-});
 
 </script>
 

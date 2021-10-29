@@ -37,7 +37,7 @@
                     <p>Staff Lists</p>
                 </a>
                 </li>
-                <?php if (is_superadmin($_SESSION['username']) || is_admin($_SESSION['username'])): ?>
+                <?php if (is_superadmin($_SESSION['role_id']) || is_admin($_SESSION['role_id'])): ?>
                 <li class="nav-item">
                 <a href="./add_staff.php" class="nav-link">
                     <i class="fas fa-chevron-right nav-icon"></i>

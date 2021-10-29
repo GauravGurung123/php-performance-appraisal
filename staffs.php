@@ -28,7 +28,7 @@ if(isset($_GET['source'])) {
 }
 switch($source) {  
     case 'edit_user';
-    include "includes/edit_staff.php";
+    include "includes/edit_user.php";
     break;
     case '200';
     echo "nice 200";
@@ -70,11 +70,17 @@ switch($source) {
                 <table id="myTable" class="table table-bordered table-hover">
                 <thead>
                 <tr>
+                    <style>
+                        th{
+                        background-color: #f8f9fa;
+                        }
+                    </style>
                     <th>S/N</th>
                     <th>Username</th>
                     <th>Full Name</th>
                     <th>Designation</th>
             <?php if (checkPermission()): ?>
+                    <th>Role</th>
                     <th>Action</th>
                     <?php endif; ?>
                 </tr>
@@ -97,24 +103,31 @@ switch($source) {
             $count = mysqli_num_rows($do_count);
             $count = ceil($count / $per_page);
 
-            $query = "SELECT * FROM staffs WHERE role <> 'superadmin' ORDER BY name LIMIT $page_1, $per_page";
+            $query = "SELECT * FROM staffs WHERE role_id <> '1' ORDER BY name LIMIT $page_1, $per_page";
             $sel_staffs = mysqli_query($connection, $query);
 
             while($row = mysqli_fetch_assoc($sel_staffs)) {
                 $id = $row['id'];
+                $role_id = $row['role_id'];
                 global $sid;
                 ++$sid;
                 $username = $row['username'];
                 $name = ucwords($row['name']);
                 $designation = ucfirst($row['designation']);
-
-                echo"<tr>";
+                
+                $query_role = "SELECT * FROM roles WHERE id='$role_id'";
+                $sel_role = mysqli_query($connection, $query_role);
+                if($rows = mysqli_fetch_assoc($sel_role)){
+                    $roleName = ucwords($rows['name']);
+                }
+                ?><tr class="<?php if($roleName=='Admin') echo "bg-info";  ?>"><?php
                 echo"<td>{$sid}</td>";
                 echo"<td>{$username}</td>";
                 echo"<td>{$name}</td>";
                 echo"<td>{$designation}</td>";
             if (checkPermission()){
-                echo "<td><a class='bg-primary p-1' href='users.php?source=edit_user&edit_user={$id}'>Edit</a>";
+                echo"<td>{$roleName}</td>";
+                echo "<td style='background-color: #fff;'><a class='bg-primary p-1' href='staffs.php?source=edit_user&edit_user={$id}'>Edit</a>";
                 if (!($_SESSION['id']==$id)){
                 // echo"&nbsp; <a class='bg-danger p-1' href='staffs.php?delete={$id}'>Delete</a></td>";
                 echo"&nbsp; <a rel='$id' class='del_link bg-danger p-1' href='javascript:void(0)'>Delete</a></td>";

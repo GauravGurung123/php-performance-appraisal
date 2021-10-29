@@ -13,6 +13,7 @@
     $username = trim($_POST['username']);
     $fullname = trim($_POST['fullname']);    
     $designation = trim($_POST['designation']);    
+    $roleId = $_POST['user_role'];  
     $user_password = trim($_POST['password']);
     $user_confirm_password = trim($_POST['confirm_password']);
     $password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
@@ -41,12 +42,12 @@
 
   if (empty($error)) {
     
-      $query = "INSERT INTO staffs(username, name, designation, password)";
-      $query .= "values('$username', '$fullname', '$designation', '$password')";
+      $query = "INSERT INTO staffs(username, name, role_id, designation, password)";
+      $query .= "VALUES('$username', '$fullname', '$roleId', '$designation', '$password')";
 
       $create_user_query = mysqli_query($connection, $query);
       $log_action = "new user added";
-    create_log($_SERVER['REMOTE_ADDR'], $username, $_SERVER['HTTP_USER_AGENT'], $log_action); 
+      create_log($_SERVER['REMOTE_ADDR'], $username, $_SERVER['HTTP_USER_AGENT'], $log_action); 
 
       if(!$create_user_query) {
         die("QUERY Failed". mysqli_error($connection) );
@@ -94,6 +95,21 @@ var check = function() {
                     <div class="form-group">
                     <label for="exampleDesignation">Designation</label>
                     <input type="text" class="form-control" id="exampleDesignation" name="designation" placeholder="assign designation">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleEvaluateename" class="col-form-label">User Roles</label>
+                        <select name="user_role" class="form-control">
+                            <?php
+                            $query_role1 = "SELECT * FROM roles WHERE name <> 'superadmin' ";
+                            $sel_role1 = mysqli_query($connection, $query_role1);
+                            while($row = mysqli_fetch_assoc($sel_role1)) {
+                                $id = $row['id'];
+                                $role = $row['name'];?>
+                              <option value="<?php echo $id; ?>"><?php echo $role;?></option>';
+                                <?php
+                            }
+                            ?> 
+                        </select>
                     </div>
                     
                     <div class="form-group">

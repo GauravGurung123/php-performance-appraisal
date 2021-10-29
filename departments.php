@@ -100,7 +100,7 @@ switch($source) {
                 echo"<tr>";
                 echo"<td>{$id}</td>";
                 echo"<td>{$name}</td>";
-            if (is_superadmin($_SESSION['username']) || is_admin($_SESSION['username'])){
+            if (is_superadmin($_SESSION['role_id']) || is_admin($_SESSION['role_id'])){
                 
                 echo "<td><a class='bg-primary p-1' href='departments.php?source=edit_department&edit_department={$id}'>Edit</a>";
                 echo"&nbsp; <a class='bg-danger p-1' href='departments.php?delete={$id}'>Delete</a></td>";

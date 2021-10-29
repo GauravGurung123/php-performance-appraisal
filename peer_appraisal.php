@@ -54,6 +54,7 @@
             $total  = $rows['total'];
             $avg  = round($rows['avg']);
             $scaleScore = $rows['scaleScore'];
+            // $scaleScore = $scaleScore * $nums;
             global $result;
             $percentage = ($total/$scaleScore)*100;
             $remarK_query = "SELECT * FROM remarks";    
@@ -100,50 +101,107 @@
         $report_action = "new report added";
         create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $report_action); 
        
-        header('Location: '.$_SERVER['PHP_SELF']);
-        die;
+        header('Location: reports.php');
+        
 
     } 
 ?>
 <!-- self appraiasl form -->
 <?php
-    // if(isset($_POST['self_report'])){
-    //     $evaluatorname = $_SESSION['name'];
-    // 
-    //     $totalScore = $punctuality+$attendance+$accuracy+$teamwork+$leadership+$communication+$creativity;
-    //     $avgScore =  round($totalScore/7);
-    //     switch($avgScore) {  
-    //         case ($avgScore<=3);
-    //         $remark = "poor";
-    //         break;
-    //         case ($avgScore>3 && $avgScore<6);
-    //         $remark = "appreciable";
-    //         break;
-    //         case ($avgScore>5 && $avgScore<9);
-    //         $remark = "strong work ethic";
-    //         break;
-    //         case 9;
-    //         $remark = "excellent";
-    //         break;
-    //         default:
-    //         $remark = "outstanding performance";
-    //         break;
-    //     }
-         
-    //     $query = "INSERT INTO eval_reports(evaluator_name, eval_total_score, eval_score, eval_remarks)";
-    //     $query .= "VALUES('$evaluatorname', '$punctuality', '$attendance', '$accuracy', '$teamwork', '$leadership', '$communication', '$creativity', '$totalScore', '$avgScore', '$remark')";
-
-    //     $create_report_query = mysqli_query($connection, $query);
-    //     $log_action = "self report added";
-    //     create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
-
-    //     if(!$create_report_query) {
-    //     die("QUERY Failed". mysqli_error($connection) );
-    //     }
-    //     header('Location: '.$_SERVER['PHP_SELF']);
-    //     die;
+    if(isset($_POST['self_report'])){
+        $evaluatorname = $_SESSION['name'];
+        $evaluatorId = $_SESSION['id'];
+        $evaluateeId = $_SESSION['id'];;
         
-    // } 
+        $query = "SELECT * FROM appraisal_criterias";
+        $criterias = mysqli_query($connection, $query);
+        $nums = mysqli_num_rows($criterias);
+        $query2 = "SELECT * FROM scales" ;
+        $sel_all_post2 = mysqli_query($connection, $query2);
+        if ($rows = mysqli_fetch_assoc($sel_all_post2)) {
+            $maxScale  = $rows['maximum'];
+            $maxScale = $maxScale;
+            $minScale  = $rows['minimum'];
+            $minScale = $minScale;
+            $maxScale = $maxScale-$minScale;
+        }
+        $rep_id = hexdec(uniqid()); 
+        while($row = mysqli_fetch_assoc($criterias)) {
+            $id = $row['id'];
+            
+            $names = ucwords($row['name']);
+            $comment = 'comment'.$names;
+                
+            $score= intval($_POST[$names]);
+            $remark= trim($_POST[$comment]);
+            
+            $query = "INSERT INTO reports(report_id, criteria_id, evaluator_id, evaluatee_id, score, remark, max_scale)";
+            $query .= "VALUES('$rep_id', '$id', '$evaluatorId', '$evaluateeId', '$score', '$remark', '$maxScale')";
+        
+            $add_report_query = mysqli_query($connection, $query);
+        }   
+        
+        $q3 = "SELECT SUM(score) AS total, AVG(score) AS avg, SUM(max_scale) AS scaleScore FROM reports where report_id = '$rep_id'";
+        $val2= mysqli_query($connection,$q3);
+        
+    
+
+
+        if ($rows = mysqli_fetch_assoc($val2)) {
+            $total  = $rows['total'];
+            $avg  = round($rows['avg']);
+            $scaleScore = $rows['scaleScore'];
+            // $scaleScore = $scaleScore * $nums;
+            global $result;
+            $percentage = ($total/$scaleScore)*100;
+            $remarK_query = "SELECT * FROM remarks";    
+            $val3= mysqli_query($connection,$remarK_query);
+            if ($rows = mysqli_fetch_assoc($val3)) {
+                $twenty  = $rows['twenty'];
+                $fourty  = $rows['fourty'];
+                $sixty  = $rows['sixty'];   
+                $eighty  = $rows['eighty'];
+                $hundred  = $rows['hundred'];
+                
+                switch($percentage) {
+                    case ($percentage<20):
+                        $result = $twenty;
+                        break;
+                    case ($percentage>=20 && $percentage <40 ):
+                        $result = $fourty;
+                        break;
+                    case ($percentage>=40 && $percentage <60 ):
+                        $result = $sixty;
+                        break;
+                    case ($percentage>=60 && $percentage <80 ):
+                        $result = $eighty;
+                        break;
+                    default:
+                        $result = $hundred;
+                        break;
+
+                }   
+                
+            }
+        }
+
+        $query1 = "UPDATE reports SET ";
+        $query1 .="result = '{$result}' ";
+        $query1 .="WHERE report_id = {$rep_id} ";
+        $add_result_query = mysqli_query($connection, $query1);
+        if(!$add_result_query) {
+            die("QUERY Failed". mysqli_error($connection) );
+        }
+        if(!$add_report_query) {
+            die("QUERY Failed". mysqli_error($connection) );
+        }
+        $report_action = "new report added";
+        create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $report_action); 
+       
+        header('Location: reports.php');
+        die;
+
+    } 
 ?>
 <!-- <script>
     window.onpageshow = function() {
@@ -175,154 +233,12 @@
             <div class="card-body">
                 <div class="tab-content" id="custom-tabs-four-tabContent">
                     <div class="tab-pane fade show active" id="custom-tabs-four-peer" role="tabpanel" aria-labelledby="custom-tabs-four-peer-tab">
-                    <div class="card card-info m-2">
-                            <div class="card-header">
-                                <h3 class="card-title">Peer Evaluation Form</h3>
-                            </div>
-                            <!-- /.card-header -->
-                            <!-- form start -->
-                            <form action="" method="post" class="col-10">
-                            <div class="card-body">
-                                <div class="form-group row">
-                                    <label for="exampleEvaluatorname" class="col-sm-6 col-form-label">Evaluator Name</label>
-                                    <div class="col-sm-6">
-                                    <input type="text" name="evaluatorname" class="form-control" 
-                                    id="exampleEvaluatorname" value="<?php echo $_SESSION['name']; ?>" disabled>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="exampleEvaluateename" class="col-sm-6 col-form-label">Evaluatee Name</label>
-                                    <div class="col-sm-6">
-                                    <select name="evaluateename" class="form-control select2" style="width: 100%;">
-                                    <?php
-
-                                        $query = "SELECT * from staffs";
-                                        $sel_staffs = mysqli_query($connection, $query);
-                                        confirm($sel_staffs);
-                                        while($row = mysqli_fetch_assoc($sel_staffs)) {
-                                            $id = $row['id'];
-                                            $name = $row['name'];
-                                            $username = $row['username'];
-
-                                            echo '<option value="'. $id .'" ' . ($_SESSION['username']=='' . $username . ''  ? 'disabled="disabled"' : ''). '>' . $name .'</option>';
-
-                                        }
-
-                                        ?>
-                                        
-                                    </select>
-                                    </div>
-                                </div>
-                                <span class="validity"><p>rating must be in range of 1 to 10.</p></span>
-                                
-                                <?php
-
-                                   $query = "SELECT * from appraisal_criterias";
-                                $sel_criterias = mysqli_query($connection, $query);
-                                confirm($sel_criterias);
-                                while($row = mysqli_fetch_assoc($sel_criterias)) {
-                                    // $id = $row['id'];
-                                    $name = ucwords($row['name']);
-                                    $query = "SELECT * FROM scales";
-                                    $sel_scl = mysqli_query($connection, $query);
-                                    if($row = mysqli_fetch_assoc($sel_scl)) {
-                                        $min = $row['minimum'];
-                                        $max = $row['maximum'];
-                                    }
-
-                                    echo "<div class='form-group row'>
-                                <label for='example{$name}' class='col-sm-6 col-form-label'>{$name}</label>
-                                    <div class='col-sm-2'>
-                                    <input type='number' name='{$name}' onblur='handleValue(this, {$min}, {$max})' 
-                                    class='form-control' onfocus='handleFocus(this)' min='{$min}' max='{$max}'
-                                    id='example{$name}' placeholder='{$min} to {$max}' required>
-                                    </div>
-                                    <label for='examplefbk{$name}' class='col-sm-6 col-form-label'>Remarks</label>
-                                    <div class='col-sm-6'>
-                                    <input type='text' name='comment{$name}' class='form-control' 
-                                    id='examplefbk{$name}' placeholder='your remarks'>
-                                    
-                                    </div>
-                                    </div><hr>";
-
-                                }
-                                ?>
-                                </div>
-                                <!-- /.card body-->
-                                <div class="card-footer">
-                                    <button type="submit" name="create_report" class="btn btn-info" data-toggle="modal" data-target="#modal-lg">Submit</button>
-                                </div>
-                                <!-- /.card-footer -->            
-                            
-                            </form>
-                        </div>
-                        <!-- ./card -->
+                        <?php include "includes/peertab.php" ?>
                     </div>
                     <!-- peer tab ends -->
                     <div class="tab-pane fade" id="custom-tabs-four-self" role="tabpanel" aria-labelledby="custom-tabs-four-self-tab">
                         <!-- self appraisal -->
-                        <div class="card card-info m-2">
-                            <div class="card-header">
-                                <h3 class="card-title">Self Appraisal Form</h3>
-                            </div>
-                            <!-- /.card-header -->
-                            <!-- form start -->
-                            <form action="" method="post">
-                                <div class="card-body">
-                                    <div class="form-group row">
-                                        <label for="exampleEvaluatorname" class="col-sm-6 col-form-label">Evaluator Name</label>
-                                        <div class="col-sm-6">
-                                        <input type="text" name="evaluatorname" class="form-control" 
-                                        id="exampleEvaluatorname" value="<?php echo $_SESSION['name']; ?>" disabled>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="exampleEvaluateename" class="col-sm-6 col-form-label">Evaluatee Name</label>
-                                        <div class="col-sm-6">
-                                        <input type="text" name="evaluatorname" class="form-control" 
-                                        id="exampleEvaluateename" value="self" disabled>
-                                        </div>
-                                    </div>            
-                                    <span class="validity"><p>rating must be in range of 1 to 10.</p></span>
-
-                                    <?php
-                                    $query = "SELECT * from appraisal_criterias";
-                                    $sel_criterias = mysqli_query($connection, $query);
-                                    confirm($sel_criterias);
-                                    while($row = mysqli_fetch_assoc($sel_criterias)) {
-                                        $name = $row['name'];
-                                        $query = "SELECT * FROM scales";
-                                        $sel_scl = mysqli_query($connection, $query);
-                                        if($row = mysqli_fetch_assoc($sel_scl)) {
-                                        $min = $row['minimum'];
-                                        $max = $row['maximum'];
-                                        }
-                                        echo "<div class='form-group row'>
-                                        <label for='example{$name}' class='col-sm-6 col-form-label'>{$name}</label>
-                                        <div class='col-sm-2'>
-                                        <input type='number' name='{$name}' class='form-control' 
-                                        id='example{$name}' placeholder='{$min} to {$max}' min='{$min}' max='{$max}'  required>
-                                        
-                                        </div>
-                                        <label for='examplefbk{$name}' class='col-sm-6 col-form-label'>Remarks</label>
-                                        <div class='col-sm-6'>
-                                        <input type='text' name='comment{$name}' class='form-control' 
-                                        id='examplefbk{$name}' placeholder='your remarks' required>
-                                        
-                                        </div>
-                                        </div>";
-
-                                    }
-                                    ?>  
-                                </div>
-                                <!-- /.card-body -->
-                                <div class="card-footer">
-                                <button type="submit" name="self_report" class="btn btn-info" data-toggle="modal" data-target="#modal-lg">Submit</button>
-                                </div>
-                                <!-- /.card-footer -->
-                            </form>
-                        </div>
-                        <!-- ./card -->
+                        <?php include "includes/selftab.php" ?>
                     </div>
                     <!-- self tab ends -->
                 </div>
