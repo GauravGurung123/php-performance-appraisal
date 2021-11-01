@@ -10,7 +10,10 @@
 
 <!-- peer appraiasl form -->
 <?php
-    
+    $query_field_c = "SELECT * FROM fields";
+    $fields_query_c = mysqli_query($connection, $query_field_c);
+    $lc = mysqli_num_rows($fields_query_c);
+
     if(isset($_POST['create_report'])){
         $evaluatorname = $_SESSION['name'];
         $evaluatorId = $_SESSION['id'];
@@ -46,9 +49,6 @@
         
         $q3 = "SELECT SUM(score) AS total, AVG(score) AS avg, SUM(max_scale) AS scaleScore FROM reports where report_id = '$rep_id'";
         $val2= mysqli_query($connection,$q3);
-        
-    
-
 
         if ($rows = mysqli_fetch_assoc($val2)) {
             $total  = $rows['total'];
@@ -57,39 +57,24 @@
             // $scaleScore = $scaleScore * $nums;
             global $result;
             $percentage = ($total/$scaleScore)*100;
-            $remarK_query = "SELECT * FROM remarks";    
+            $remarK_query = "SELECT fields.id as id, fields.salary as sal, fields.remark as rem, fields_range.minimum as mnm, fields_range.maximum as mxm FROM fields INNER JOIN fields_range ON fields.id = fields_range.field_id ORDER BY fields_range.id DESC LIMIT $lc";    
             $val3= mysqli_query($connection,$remarK_query);
-            if ($rows = mysqli_fetch_assoc($val3)) {
-                $twenty  = $rows['twenty'];
-                $fourty  = $rows['fourty'];
-                $sixty  = $rows['sixty'];   
-                $eighty  = $rows['eighty'];
-                $hundred  = $rows['hundred'];
+            while ($rows = mysqli_fetch_assoc($val3)) {
+                $f_id  = $rows['id'];
+                $f_min  = $rows['mnm'];
+                $f_max  = $rows['mxm'];   
+                $f_result  = $rows['rem'];   
+                $f_salary  = $rows['sal'];   
                 
-                switch($percentage) {
-                    case ($percentage<20):
-                        $result = $twenty;
-                        break;
-                    case ($percentage>=20 && $percentage <40 ):
-                        $result = $fourty;
-                        break;
-                    case ($percentage>=40 && $percentage <60 ):
-                        $result = $sixty;
-                        break;
-                    case ($percentage>=60 && $percentage <80 ):
-                        $result = $eighty;
-                        break;
-                    default:
-                        $result = $hundred;
-                        break;
-
-                }   
-                
+                if(($percentage > $f_min && $percentage <= $f_max)){
+                    $result = $f_result;
+                    $salary = $f_salary;
+                }
             }
         }
 
         $query1 = "UPDATE reports SET ";
-        $query1 .="result = '{$result}' ";
+        $query1 .="result = '{$result}', pay_raise= '{$salary}' ";
         $query1 .="WHERE report_id = {$rep_id} ";
         $add_result_query = mysqli_query($connection, $query1);
         if(!$add_result_query) {
@@ -102,7 +87,6 @@
         create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $report_action); 
        
         header('Location: reports.php');
-        
 
     } 
 ?>
@@ -154,39 +138,25 @@
             // $scaleScore = $scaleScore * $nums;
             global $result;
             $percentage = ($total/$scaleScore)*100;
-            $remarK_query = "SELECT * FROM remarks";    
+            $remarK_query = "SELECT fields.id as id, fields.salary as sal, fields.remark as rem, fields_range.minimum as mnm, fields_range.maximum as mxm FROM fields INNER JOIN fields_range ON fields.id = fields_range.field_id ORDER BY fields_range.id DESC LIMIT $lc";    
             $val3= mysqli_query($connection,$remarK_query);
-            if ($rows = mysqli_fetch_assoc($val3)) {
-                $twenty  = $rows['twenty'];
-                $fourty  = $rows['fourty'];
-                $sixty  = $rows['sixty'];   
-                $eighty  = $rows['eighty'];
-                $hundred  = $rows['hundred'];
+            while ($rows = mysqli_fetch_assoc($val3)) {
+                $f_id  = $rows['id'];
+                $f_min  = $rows['mnm'];
+                $f_max  = $rows['mxm'];   
+                $f_result  = $rows['rem'];   
+                $f_salary  = $rows['sal'];   
                 
-                switch($percentage) {
-                    case ($percentage<20):
-                        $result = $twenty;
-                        break;
-                    case ($percentage>=20 && $percentage <40 ):
-                        $result = $fourty;
-                        break;
-                    case ($percentage>=40 && $percentage <60 ):
-                        $result = $sixty;
-                        break;
-                    case ($percentage>=60 && $percentage <80 ):
-                        $result = $eighty;
-                        break;
-                    default:
-                        $result = $hundred;
-                        break;
-
+                if(($percentage > $f_min && $percentage <= $f_max)){
+                    $result = $f_result;
+                    $salary = $f_salary;
                 }   
                 
             }
         }
 
         $query1 = "UPDATE reports SET ";
-        $query1 .="result = '{$result}' ";
+        $query1 .="result = '{$result}', pay_raise= '{$salary}' ";
         $query1 .="WHERE report_id = {$rep_id} ";
         $add_result_query = mysqli_query($connection, $query1);
         if(!$add_result_query) {

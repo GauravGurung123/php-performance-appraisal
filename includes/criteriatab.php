@@ -14,7 +14,7 @@ if(!$source=='edit_contact'): ?>
                 <input type="text" class="form-control" id="exampleCriteria" name="criteria_name" placeholder="add new criteria">
                 <small><?php echo isset($error['criteriaName']) ? $error['criteriaName'] : '' ?></small>
             </div>
-            <button type="submit" id="submit" name="create_criteria" class="btn btn-primary">Add New</button>
+            <button type="submit" id="submit" name="create_criteria" class="btn btn-sm btn-primary">Add New</button>
             
         </div>
     <!-- /.card-body -->
@@ -81,8 +81,8 @@ table, td, th, thead {
             }  
 
 
-            echo "<td><a class='bg-primary p-1' href='config.php?source=edit_criteria&edit_criteria={$id}'>Edit</a>
-                    <a rel='$id' class='del_link bg-danger p-1' href='javascript:void(0)'>Delete</a></td>";
+            echo "<td><small><a class='bg-primary p-1' href='config.php?source=edit_criteria&edit_criteria={$id}'>Edit</a>
+                    <a rel='$id' class='del_link bg-danger p-1' href='javascript:void(0)'>Delete</a></small></td>";
             echo"</tr>";
 
         }?>         

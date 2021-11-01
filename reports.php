@@ -45,21 +45,13 @@
                             
                         <select name="order_result" class="form-control select2" style="width: 100%;">
                         <?php 
-                                $res_query = "SELECT * FROM remarks";    
+                                $res_query = "SELECT * FROM fields";    
                                 $value= mysqli_query($connection,$res_query);
-                                if ($row = mysqli_fetch_assoc($value)) {
-                                    $twenty = $row['twenty'];
-                                    $fourty = $row['fourty'];
-                                    $sixty = $row['sixty'];
-                                    $eighty = $row['eighty'];
-                                    $hundred = $row['hundred'];
+                                echo '<option>-- select result --</option>';
+                                while ($row = mysqli_fetch_assoc($value)) {
+                                    $remark = $row['remark'];
                                     ?>
-                                    <option >-- select result --</option>';
-                                    <option value="<?php echo $twenty; ?>" ><?php echo $twenty; ?></option>';
-                                    <option value="<?php echo $fourty; ?>" ><?php echo $fourty; ?></option>';
-                                    <option value="<?php echo $sixty; ?>" ><?php echo $sixty; ?></option>';
-                                    <option value="<?php echo $eighty; ?>" ><?php echo $eighty; ?></option>';
-                                    <option value="<?php echo $hundred; ?>" ><?php echo $hundred; ?></option>';
+                                    <option value="<?php echo $remark; ?>" ><?php echo $remark; ?></option>';
                                     <?php
                                 }
                             ?>    
@@ -113,6 +105,7 @@
                     <th>Created At</th>
                     <th>Evaluator</th>
                     <th>Evaluatee</th>
+                    <th>Pay Raise</th>
                     <?php
                     $query = "SELECT DISTINCT(criteria_id) as crit_id from reports";
                     $criterias = mysqli_query($connection, $query);
@@ -151,13 +144,15 @@
             $count = mysqli_num_rows($do_count);
             $count = ceil($count / $per_page);
 
-            $query = "SELECT  report_id,evaluator_id, evaluatee_id, created_at FROM reports GROUP BY report_id ORDER BY created_at DESC";
+            $query = "SELECT pay_raise,report_id,evaluator_id, evaluatee_id, created_at, result FROM reports GROUP BY report_id ORDER BY created_at DESC";
             $sel_reports = mysqli_query($connection, $query);
 
             while($row = mysqli_fetch_assoc($sel_reports)) {   
                 global $sn;
                 ++$sn;          
                 $reportId = $row['report_id'];
+                $payRaise = $row['pay_raise'];
+                $result = $row['result'];
                 $reportId = trimWords($reportId);
                 $a1 = $row['evaluator_id'];
                 $a2 = $row['evaluatee_id'];
@@ -166,7 +161,7 @@
                 echo"<tr>";
                 ?>
                 <td class='text-center'><?php echo $sn; ?>
-                <?php if (is_superadmin($_SESSION['username']) || is_admin($_SESSION['username'])): ?>
+                <?php if (checkPermission()): ?>
                 <br><small>
                 <a rel='<?php echo $reportId?>' class='del_link bg-danger p-1' href='javascript:void(0)'>del</a></small> 
                 <?php endif; ?></td>
@@ -182,6 +177,7 @@
 
                     }
                 }
+                echo"<td>{$payRaise}</td>";
                 $addCol = "SELECT COUNT(DISTINCT(criteria_id)) AS count FROM reports";
                 $res = mysqli_query($connection,$addCol);
                 while($rows=mysqli_fetch_assoc($res)){
@@ -203,9 +199,7 @@
                                 $c2=$c2+1;
                                 
                                 echo"<td>{$q}<br>(<small>{$r}</small> )</td>";
-                                
                             }
-                                
                             $g=true;
                             $tc = $tc - 1 - $c2;
                             if(!($tc1==$c1)){
@@ -222,48 +216,16 @@
                     $total  = $rows['total'];
                     $avg  = round($rows['avg']);
                     $scaleScore = $rows['scaleScore'];
-
-                    $percentage = ($total/$scaleScore)*100;
                     echo"<td>{$total}</td>";
                     echo"<td>{$avg}</td>";
-                    
-                    $remarK_query = "SELECT * FROM remarks";    
-                    $val3= mysqli_query($connection,$remarK_query);
-                    if ($rows = mysqli_fetch_assoc($val3)) {
-                        $twenty  = $rows['twenty'];
-                        $fourty  = $rows['fourty'];
-                        $sixty  = $rows['sixty'];   
-                        $eighty  = $rows['eighty'];
-                        $hundred  = $rows['hundred'];
-                        
-                        switch($percentage) {
-                            case ($percentage<20):
-                                echo"<td>{$twenty}</td>";
-                                break;
-                            case ($percentage>=20 && $percentage <40 ):
-                                echo"<td>{$fourty}</td>";
-                                break;
-                            case ($percentage>=40 && $percentage <60 ):
-                                echo"<td>{$sixty}</td>";
-                                break;
-                            case ($percentage>=60 && $percentage <80 ):
-                                echo"<td>{$eighty}</td>";
-                                break;
-                            default:
-                                echo"<td>{$hundred}</td>";
-                                break;
-
-                        }   
-                        
-                    }
+                    echo"<td>{$result}</td>";
                 }
+                    
             }
                 echo"</tr>";
         ?>
         
                 </table>
-            
-
                 <div class="row mt-3">
                             <div class="col-sm-12 col-md-5">
                                 <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">

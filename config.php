@@ -45,6 +45,34 @@
   }
 }
 ?>
+<?php
+  if(isset($_POST['create_range'])) {
+    // var_dump($_POST);
+    // die();
+    $res_id = hexdec(uniqid());
+    $query = "SELECT * FROM fields";
+    $field = mysqli_query($connection, $query);
+    // $nums = mysqli_num_rows($field);
+    while($row = mysqli_fetch_assoc($field)) {
+      $field_id = $row['id'];
+      $name = $row['name'];
+      $min = $name.'min';
+      $max = $name.'max';
+      $minimum = trim($_POST[$min]);
+      $maximum = trim($_POST[$max]);
+
+      $field_query = "INSERT INTO fields_range(field_id, minimum, maximum, result_id)";
+      $field_query .= "VALUES('$field_id', '$minimum', '$maximum', '$res_id')";
+
+      $create_result_query = mysqli_query($connection, $field_query);
+    }?><?php
+    $log_action="range created";
+    create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action);
+
+    header('Location: '.$_SERVER['PHP_SELF']);
+    die;
+  } 
+?>
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -64,6 +92,7 @@
             <div class="col-5 col-sm-3">
               <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
                 <a class="nav-link active" id="vert-tabs-criteria-tab" data-toggle="pill" href="#vert-tabs-criteria" role="tab" aria-controls="vert-tabs-criteria" aria-selected="true">Set Appraisal Criteria</a>
+                <a class="nav-link" id="vert-tabs-range-tab" data-toggle="pill" href="#vert-tabs-range" role="tab" aria-controls="vert-tabs-range" aria-selected="false">Set Field</a>
                 <a class="nav-link" id="vert-tabs-result-tab" data-toggle="pill" href="#vert-tabs-result" role="tab" aria-controls="vert-tabs-result" aria-selected="false">Set Result</a>
                 <a class="nav-link" id="vert-tabs-scale-tab" data-toggle="pill" href="#vert-tabs-scale" role="tab" aria-controls="vert-tabs-scale" aria-selected="false">Set Scale</a>
               </div>
@@ -71,16 +100,21 @@
             <div class="col-7 col-sm-9">
               <div class="tab-content" id="vert-tabs-tabContent">
                 <div class="tab-pane text-left fade show active" id="vert-tabs-criteria" role="tabpanel" aria-labelledby="vert-tabs-criteria-tab">
-                  <!-- appraisal settings      -->
-                  <?php include("includes/modal_delete.php"); ?>
+                  <!-- appraisal settings  include("includes/modal_delete.php");     -->
+                  <?php  ?>
                   <?php include "includes/criteriatab.php"; ?>
                 </div>
                 <!-- set appraisal tab ended -->
+                <!-- Set Range Tab -->
+                <div class="tab-pane fade" id="vert-tabs-range" role="tabpanel" aria-labelledby="vert-tabs-range-tab">
+                  <?php include "includes/rangetab.php"; ?>
+                </div> 
+                <!-- Set  Range tab ended -->
                 <!-- Set Result Tab -->
                 <div class="tab-pane fade" id="vert-tabs-result" role="tabpanel" aria-labelledby="vert-tabs-result-tab">
                   <?php include "includes/resulttab.php"; ?>
                 </div> 
-                <!-- set  Result tab ended -->
+                <!-- Set  Result tab ended -->
                 <!-- set scale range tab -->
                 <div class="tab-pane fade" id="vert-tabs-scale" role="tabpanel" aria-labelledby="vert-tabs-scale-tab">
                   <?php include "includes/scaletab.php"; ?>
@@ -105,18 +139,33 @@
 <!-- /.content-wrapper -->
 
 <?php include "includes/footer.php" ?>
+<?php include("includes/modal_delete.php"); ?>
+
 <script>
-    $(document).ready(function(){
-        $(".del_link").on('click', function(){
-            var delId1 = $(this).attr("rel");
-            var delUrl1 = "config.php?delete="+ delId1 +" ";
+  $(document).ready(function(){
+      $(".del_link").on('click', function(){
+          var delId1 = $(this).attr("rel");
+          var delUrl1 = "config.php?delete="+ delId1 +" ";
 
-            $(".modal_del_link").attr("href", delUrl1);
+          $(".modal_del_link").attr("href", delUrl1);
 
-            $("#modal-sm").modal('show');
-           
-        });
-    });
+          $("#modal-sm").modal('show');
+          
+      });
+  });
+  
+  $(function() {
+
+  $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+    localStorage.setItem('lastTab', $(this).attr('href'));
+  });
+  var lastTab = localStorage.getItem('lastTab');
+  
+  if (lastTab) {
+    $('[href="' + lastTab + '"]').tab('show');
+  }
+    
+  });
 
 </script>
 <?php

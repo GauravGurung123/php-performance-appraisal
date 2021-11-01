@@ -26,7 +26,7 @@ if(isset($_GET['search'])) {
                 <?php include("includes/modal_delete.php"); ?>
             </div>
             <!-- Date range -->
-            <form action="search_category.php" method="post">
+            <form action="search_category.php" method="get">
             <div class="row">
                 <div class="col-4">
                     <div class="form-group">
@@ -49,21 +49,13 @@ if(isset($_GET['search'])) {
                         <div class="input-group">
                         <select name="order_result" class="form-control select2" style="width: 100%;">
                         <?php 
-                                $res_query = "SELECT * FROM remarks";    
+                                $res_query = "SELECT * FROM fields";    
                                 $value= mysqli_query($connection,$res_query);
-                                if ($row = mysqli_fetch_assoc($value)) {
-                                    $twenty = $row['twenty'];
-                                    $fourty = $row['fourty'];
-                                    $sixty = $row['sixty'];
-                                    $eighty = $row['eighty'];
-                                    $hundred = $row['hundred'];
+                                echo '<option>'.$orderResult.'</option>';
+                                while ($row = mysqli_fetch_assoc($value)) {
+                                    $remark = $row['remark'];
                                     ?>
-                                    <option ><?php echo $orderResult; ?></option>';
-                                    <option value="<?php echo $twenty; ?>" ><?php echo $twenty; ?></option>';
-                                    <option value="<?php echo $fourty; ?>" ><?php echo $fourty; ?></option>';
-                                    <option value="<?php echo $sixty; ?>" ><?php echo $sixty; ?></option>';
-                                    <option value="<?php echo $eighty; ?>" ><?php echo $eighty; ?></option>';
-                                    <option value="<?php echo $hundred; ?>" ><?php echo $hundred; ?></option>';
+                                    <option value="<?php echo $remark; ?>" ><?php echo $remark; ?></option>';
                                     <?php
                                 }
                             ?>    
@@ -147,11 +139,11 @@ if(isset($_GET['search'])) {
                 $toFrom = explode(' - ',$orderDate);
                 $from = $toFrom['0'];
                 $to = $toFrom['1'];
-                if(!$orderResult=='-- select result --'){
+                // if(!$orderResult=='-- select result --'){
                 $date_query = "SELECT * FROM reports WHERE ((DATE(created_at) >= '$from' AND DATE(created_at)) <= '$to') AND (result = '$orderResult')  GROUP BY report_id";
-                } else {
-                $date_query = "SELECT * FROM reports WHERE DATE(created_at) >= '$from' AND DATE(created_at) <= '$to' GROUP BY report_id";
-                }
+                // } else {
+                // $date_query1 = "SELECT * FROM reports WHERE DATE(created_at) >= '$from' AND DATE(created_at) <= '$to' GROUP BY report_id";
+                // }
                 $search_query = mysqli_query($connection, $date_query);
 
                 if(!$search_query){
@@ -172,7 +164,7 @@ if(isset($_GET['search'])) {
                 echo"<tr>";
                 ?>
                 <td class='text-center'><?php echo $sn; ?>
-                <?php if (is_superadmin($_SESSION['username']) || is_admin($_SESSION['username'])): ?>
+                <?php if (checkPermission()): ?>
                 <br><small>
                 <a rel='<?php echo $reportId?>' class='del_link bg-danger p-1' href='javascript:void(0)'>del</a></small> 
                 <?php endif; ?></td>

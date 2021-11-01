@@ -29,8 +29,7 @@
                             <p>Set new scale range </p>
                             <div class="row">
                               <div class="col-4">
-                                
-                                <input type="number" class="form-control" id="exampleMinimum" name="minimum" value="<?php echo $minimum;?>" placeholder="min: <?php echo $minimum;?>"> - &nbsp;
+                                <input type="number" class="form-control" id="exampleMinimum" name="minimum" value="<?php echo $minimum;?>" placeholder="min: <?php echo $minimum;?>"> 
                               </div>
                               <div class="col-4">
                                   <input type="number" class="form-control" id="exampleMaximum" name="maximum" value="<?php echo $maximum;?>" placeholder="max: <?php echo $maximum;?>">

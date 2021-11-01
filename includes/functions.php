@@ -123,6 +123,19 @@ function department_exists($department) {
 
 }
 
+function fieldName_exists($name) {
+    global $connection;
+    $query = "SELECT name from fields where name = '$name'";
+    $result =  mysqli_query($connection, $query);
+    confirm($result);
+    if (mysqli_num_rows($result) > 0) {
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
 
 function criteria_exists($criteria) {
     global $connection;
@@ -148,6 +161,21 @@ function email_exists($user_email) {
         return false;
     }
 
+}
+
+function field_exists() {
+    global $connection;
+    $query="SELECT id,name FROM fields WHERE EXISTS (SELECT field_id FROM fields_range as frange WHERE frange.field_id = fields.id )";
+    $field_query = mysqli_query($connection, $query);
+    $time1 = mysqli_num_rows($field_query);  
+    $query1 = "SELECT * FROM fields";
+    $fields_query = mysqli_query($connection, $query1);
+    $time2 = mysqli_num_rows($fields_query);
+    if($time1==$time2){
+        return true;
+    } else {
+        return false;
+    }
 }
 
 function register_user($username, $user_firstname, $user_lastname, $user_email, $password,$user_address) {
