@@ -89,12 +89,12 @@
         <div class="card-body">
           <h4>Settings</h4>
           <div class="row">
-            <div class="col-5 col-sm-3">
+            <div class="col-5 col-sm-2">
               <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist" aria-orientation="vertical">
-                <a class="nav-link active" id="vert-tabs-criteria-tab" data-toggle="pill" href="#vert-tabs-criteria" role="tab" aria-controls="vert-tabs-criteria" aria-selected="true">Set Appraisal Criteria</a>
-                <a class="nav-link" id="vert-tabs-range-tab" data-toggle="pill" href="#vert-tabs-range" role="tab" aria-controls="vert-tabs-range" aria-selected="false">Set Field</a>
-                <a class="nav-link" id="vert-tabs-result-tab" data-toggle="pill" href="#vert-tabs-result" role="tab" aria-controls="vert-tabs-result" aria-selected="false">Set Result</a>
-                <a class="nav-link" id="vert-tabs-scale-tab" data-toggle="pill" href="#vert-tabs-scale" role="tab" aria-controls="vert-tabs-scale" aria-selected="false">Set Scale</a>
+                <a class="nav-link active" id="vert-tabs-criteria-tab" data-toggle="pill" href="#vert-tabs-criteria" role="tab" aria-controls="vert-tabs-criteria" aria-selected="true">Appraisal Criteria</a>
+                <a class="nav-link" id="vert-tabs-range-tab" data-toggle="pill" href="#vert-tabs-range" role="tab" aria-controls="vert-tabs-range" aria-selected="false">Result Name</a>
+                <a class="nav-link" id="vert-tabs-result-tab" data-toggle="pill" href="#vert-tabs-result" role="tab" aria-controls="vert-tabs-result" aria-selected="false">Result Range</a>
+                <a class="nav-link" id="vert-tabs-scale-tab" data-toggle="pill" href="#vert-tabs-scale" role="tab" aria-controls="vert-tabs-scale" aria-selected="false">Scale</a>
               </div>
             </div>
             <div class="col-7 col-sm-9">

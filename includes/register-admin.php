@@ -42,13 +42,13 @@ if(isset($_POST['create_user'])){
     $username = trim($_POST['username']);
     $fullname = trim($_POST['fullname']);    
     // $user_role = trim($_POST['user_role']);
-    $user_role = 'superadmin';    
+    // $user_role = 'superadmin';    
     $user_password = trim($_POST['password']);
     $user_confirm_password = trim($_POST['confirm_password']);
     $password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
   $error = [
       'username'=> '',
-      'role'=> '',
+      // 'role'=> '',
       'password'=> ''
   ];
 
@@ -59,10 +59,10 @@ if(isset($_POST['create_user'])){
     $error['username'] = 'username already exists, pick another one <hr color="red">';
 
   }
-  if (superuser_exists($user_role)) {
-    $error['role'] = 'SuperAdmin already exists, <hr color="red">';
+  // if (superuser_exists($user_role)) {
+  //   $error['role'] = 'SuperAdmin already exists, <hr color="red">';
 
-  }
+  // }
 
   if(!$user_password==$user_confirm_password) {
     $error['password'] = 'password not matched';
@@ -76,8 +76,8 @@ if(isset($_POST['create_user'])){
 
   if (empty($error)) {
     
-      $query = "INSERT INTO staffs(username, name, role, designation, password)";
-      $query .= "values('$username', '$fullname', 'superadmin', 'superadmin', '$password')";
+      $query = "INSERT INTO staffs(username, name, role_id, designation, password)";
+      $query .= "values('$username', '$fullname', '1', 'superadmin', '$password')";
 
       $create_user_query = mysqli_query($connection, $query);
       $log_action = "new user added";
@@ -103,10 +103,9 @@ var check = function() {
   }
 }
 </script>
-
           <div class="d-flex justify-content-center">
             <div class="col col-4 mt-5 p-4 border border-dark">
-            <?php if(isset($error['role'])): ?>
+            <?php if(!superuser_exists()):?>
             <div class="row text-center ">
               <p class="display-4">Add SuperAdmin</p>
             </div>
@@ -141,15 +140,14 @@ var check = function() {
                 <!-- /.card-body -->
 
             </form>
-      <?php else: ?>
-        <p class="display-4">Please Contact Super Admin</p>
+            <?php else: ?>
+            <p class="display-4">Please Contact Super Admin</p>
 
           </div>
           <!-- /.col col-4 -->
           </div>
           <!-- /.d-flex justify content center-->
-
-          <?php endif; ?>
+              <?php endif; ?>
       
 
 </body>

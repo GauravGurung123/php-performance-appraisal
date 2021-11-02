@@ -127,11 +127,15 @@ switch($source) {
                 echo"<td>{$designation}</td>";
             if (checkPermission()){
                 echo"<td>{$roleName}</td>";
-                echo "<td style='background-color: #fff;'><a class='bg-primary p-1' href='staffs.php?source=edit_user&edit_user={$id}'>Edit</a>";
-                if (!($_SESSION['id']==$id)){
-                // echo"&nbsp; <a class='bg-danger p-1' href='staffs.php?delete={$id}'>Delete</a></td>";
-                echo"&nbsp; <a rel='$id' class='del_link bg-danger p-1' href='javascript:void(0)'>Delete</a></td>";
-                }
+                if(!(is_admin($_SESSION['role_id']) && ($roleName=='Admin'))){
+                    echo "<td style='background-color: #fff;'><a class='bg-primary p-1' href='staffs.php?source=edit_user&edit_user={$id}'>Edit</a>";
+                    if (!($_SESSION['id']==$id)){
+                    // echo"&nbsp; <a class='bg-danger p-1' href='staffs.php?delete={$id}'>Delete</a></td>";
+                    echo"&nbsp; <a rel='$id' class='del_link bg-danger p-1' href='javascript:void(0)'>Remove</a></td>";
+                    }
+                }else {
+                    echo "<td class='bg-info'>N/A</td>";
+                } 
             }
 
                 echo"</tr>";
@@ -236,7 +240,6 @@ if(isset($_GET['delete'])) {
             }
         }
     }
-
 
 </script>
 <?php else: ?>

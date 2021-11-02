@@ -14,12 +14,10 @@
       $maximum = trim($_POST[$max]);
       // var_dump($field_id);
       // die();
-
       $query = "UPDATE fields_range SET ";
       $query .="minimum = '{$minimum}', maximum = '{$maximum}' ";
       $query .="WHERE field_id = {$field_id} ";
-      $update_field_query = mysqli_query($connection, $query);
-     
+      $update_field_query = mysqli_query($connection, $query);     
     }
     $log_action="Field updated";
     create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action);
@@ -29,6 +27,12 @@
     die;
   }
 ?>
+<style> 
+input{
+  /* height: 50%; */
+  margin: -1px;
+}
+</style>
 <div class="row"> 
   <div class="col col-5 border-right">
   <?php

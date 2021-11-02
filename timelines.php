@@ -17,14 +17,14 @@
                 <!-- The time line -->
                 <div class="timeline">
                     <?php
-                        $query = "SELECT *, sum(score) as sc FROM reports  GROUP BY report_id ORDER BY created_at DESC";
+                        $query = "SELECT *, sum(score) as sc,sum(max_scale) as mxs FROM reports  GROUP BY report_id ORDER BY created_at DESC";
                         $sel_reports = mysqli_query($connection, $query);
 
                         while($row = mysqli_fetch_assoc($sel_reports)) {
                             $a1 = $row['evaluator_id'];
                             $a2 = $row['evaluatee_id'];
                             $score = $row['sc'];
-                            $max = $row['max_scale'];
+                            $max = $row['mxs'];
                             $created_at = $row['created_at'];
 
                            ?> 

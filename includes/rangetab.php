@@ -50,18 +50,18 @@ if(!$source=='edit_contact'): ?>
     <form action="" method="post" autocomplete="on">
         <div class="card-body">
             <div class="form-group">
-                <label for="exampleCriteria">Field Name</label>
-                <input type="text" class="form-control" id="exampleCriteria" name="field_name" placeholder="set new field">
+                <label for="exampleCriteria">Result Name</label>
+                <input type="text" class="form-control" id="exampleCriteria" name="field_name" placeholder="new result name">
                 <small><?php echo isset($error['criteriaName']) ? $error['criteriaName'] : '' ?></small>
             </div>
             <div class="form-group">
-                <label for="exampleCriteria">Field remark</label>
-                <input type="text" class="form-control" id="exampleCriteria" name="remark_name" placeholder="set new remark">
+                <label for="exampleCriteria">Overall Remark</label>
+                <input type="text" class="form-control" id="exampleCriteria" name="remark_name" placeholder="remark for overall result">
                 <small><?php echo isset($error['criteriaName']) ? $error['criteriaName'] : '' ?></small>
             </div>
             <div class="form-group">
-                <label for="exampleCriteria">Salary</label>
-                <input type="number" class="form-control" name="salary_name" min="0" max="100" placeholder="set new salary">
+                <label for="exampleCriteria">Salary (%)</label>
+                <input type="number" class="form-control" name="salary_name" min="0" max="100" placeholder="new salary increment">
             </div>
             <button type="submit" id="submit" name="create_field" class="btn btn-sm btn-primary">Add New</button>
             
@@ -124,7 +124,7 @@ table, td, th, thead {
             echo"<td>{$sno}</td>";
             echo"<td>{$name}</td>";
             echo"<td>{$remark}</td>";
-            echo"<td>{$salary}</td>";
+            echo"<td>{$salary}%</td>";
 
 
             echo "<td><small><a class='bg-primary p-1' href='config.php?source=edit_field&edit_field={$id}'>Edit</a>

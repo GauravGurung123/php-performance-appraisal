@@ -55,6 +55,7 @@
 
     
   }
+  header("location: staffs.php");
 }
 ?>
 <script>

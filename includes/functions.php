@@ -97,9 +97,9 @@ function username_exists($username) {
 
 }
 
-function superuser_exists($role) {
+function superuser_exists() {
     global $connection;
-    $query = "select role from staffs where role = '$role'";
+    $query = "select role_id from staffs where role_id = '1'";
     $result =  mysqli_query($connection, $query);
     confirm($result);
     if (mysqli_num_rows($result) > 0) {

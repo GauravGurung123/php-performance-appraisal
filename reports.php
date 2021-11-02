@@ -5,6 +5,8 @@
 <?php include_once "includes/nav.php" ?>
 <!-- /.Navigation -->
 <!-- Sidebar -->
+<?php include("includes/modal_report.php"); ?>
+
 <?php include_once "includes/sidebar.php" ?>
 <!-- /.sidebar -->
 
@@ -17,6 +19,7 @@
             <div class="row">
                 <p class="display-4">Performance Appraisal Reports</p>
                 <?php include("includes/modal_delete.php"); ?>
+               
                 <button class="btn btn-sm btn-success m-4"><a class="text-white" href="peer_appraisal.php">New Evaluation</a></button>
             </div>
             <!-- Date range -->
@@ -49,7 +52,7 @@
                                 $value= mysqli_query($connection,$res_query);
                                 echo '<option>-- select result --</option>';
                                 while ($row = mysqli_fetch_assoc($value)) {
-                                    $remark = $row['remark'];
+                                    $remark = $row['name'];
                                     ?>
                                     <option value="<?php echo $remark; ?>" ><?php echo $remark; ?></option>';
                                     <?php
@@ -163,6 +166,7 @@
                 <td class='text-center'><?php echo $sn; ?>
                 <?php if (checkPermission()): ?>
                 <br><small>
+                <a class='bg-success p-1' target="_blank" href="includes/report_detail.php?report_detail=<?php echo $reportId; ?>">view</a>
                 <a rel='<?php echo $reportId?>' class='del_link bg-danger p-1' href='javascript:void(0)'>del</a></small> 
                 <?php endif; ?></td>
                 <?php
@@ -266,8 +270,6 @@
         <!-- /.container-fluid -->
         </div>
         <!-- /.content-header -->
-
-
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
@@ -283,6 +285,19 @@ $(document).ready(function(){
         
     });
 });
+// $(document).ready(function(){
+//     $(".rep_link").on('click', function(){
+//         var repIds = $(this).attr("rel");
+//         var repUrls = "reports.php?retrieve="+ repIds +" ";
+//         $(".rep_link").attr("href", repUrls);
+
+//         // $(".modal_download_rep").attr("href", repUrls);
+        
+//         $("#modal-xl").modal('show');
+//         // e.preventDefault();
+        
+//     });
+// });
 
   $(function () {
     //Date range picker
@@ -316,6 +331,7 @@ $(document).ready(function(){
             }
         }
     }
+
 </script>
 
 

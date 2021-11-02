@@ -45,6 +45,7 @@
                                 confirm($sel_criterias);
                                 while($row = mysqli_fetch_assoc($sel_criterias)) {
                                     // $id = $row['id'];
+                                    $input_name = $row['name'];
                                     $name = ucwords($row['name']);
                                     $query = "SELECT * FROM scales";
                                     $sel_scl = mysqli_query($connection, $query);
@@ -56,13 +57,13 @@
                                     echo "<div class='form-group row'>
                                 <label for='example{$name}' class='col-sm-6 col-form-label'>{$name}</label>
                                     <div class='col-sm-2'>
-                                    <input type='number' name='{$name}' onblur='handleValue(this, {$min}, {$max})' 
+                                    <input type='number' name='{$input_name}' onblur='handleValue(this, {$min}, {$max})' 
                                     class='form-control' onfocus='handleFocus(this)' min='{$min}' max='{$max}'
                                     id='example{$name}' placeholder='{$min} to {$max}' required>
                                     </div>
                                     <label for='examplefbk{$name}' class='col-sm-6 col-form-label'>Remarks</label>
                                     <div class='col-sm-6'>
-                                    <input type='text' name='comment{$name}' class='form-control' 
+                                    <input type='text' name='comment{$input_name}' class='form-control' 
                                     id='examplefbk{$name}' placeholder='your remarks'>
                                     
                                     </div>
