@@ -39,7 +39,7 @@ href="../plugins/icheck-bootstrap/icheck-boo../plugins/jqvmap/jqvmap.min.css" />
 </head>
 
 <body>
-    <div class="container p-4">
+    <div class="container">
         <?php 
 
         if(isset($_GET['report_detail'])) {
@@ -47,7 +47,7 @@ href="../plugins/icheck-bootstrap/icheck-boo../plugins/jqvmap/jqvmap.min.css" />
             $the_rep_id = mysqli_real_escape_string($connection,$_GET['report_detail']);
             
             
-            $query = "SELECT *, SUM(score) as sc, AVG(score) AS avg, SUM(MAX_SCALE) AS mxscale FROM reports where report_id='{$the_rep_id}' ";
+            $query = "SELECT *, SUM(score) as sc, AVG(score) AS avg, SUM(MAX_SCALE) AS mxscale FROM reports where report_id='{$the_rep_id}'";
             $sel_reports = mysqli_query($connection, $query);
 
             if($row = mysqli_fetch_assoc($sel_reports)) {   
@@ -56,7 +56,7 @@ href="../plugins/icheck-bootstrap/icheck-boo../plugins/jqvmap/jqvmap.min.css" />
                 $payRaise = $row['pay_raise'];
                 $total = $row['sc'];
                 $avg  = round($row['avg']);
-                $remark = $row['field_name'];
+                $result = $row['result'];
                 $maxScale = $row['mxscale'];
                 $reportId = trimWords($reportId);
                 $a1 = $row['evaluator_id'];
@@ -67,56 +67,36 @@ href="../plugins/icheck-bootstrap/icheck-boo../plugins/jqvmap/jqvmap.min.css" />
             }
         }
         ?>
-        <div class="card-footer p-0 justify-content-between" style="background-color:transparent;" id="hide-save">
-            <a href="javascript:window.open('','_self').close();" class="btn btn-default mr-2">Close</a>
-            <a href="" onclick="document.getElementById('hide-save').style.visibility= 'hidden';window.print();" class="btn btn-default" id="save-btn">Download | Print</a>
-        </div>
-
-        <div class="card p-3" id="card">
-        
+        <div class="card p-3 mt-4">
             <div class="card-header">
-                    <h5 class="card-title" style="margin-left: -5px">Performance Appraisal Report <small>of &nbsp;<?php echo $created_at; ?></small></h5>
+                    <h4 class="card-title">Performance Appraisal Report <small>of &nbsp;<?php echo $created_at; ?></small></h4>
             </div>
             <div class="card-body">
                 <?php
                     for($i=1;$i<3;$i++){
                         $var = "a".$i;
-                        $q3 ="select * from staffs where id='".${$var}."'";
+                        $q3 ="select username, name from staffs where id='".${$var}."'";
                         $results = mysqli_query($connection,$q3);
                         if($rows1=mysqli_fetch_assoc($results)){
                             $name1 = ucwords($rows1['name']); 
-                            $designation = ucwords($rows1['designation']); 
                             $username = $rows1['username'];
-                            $deptId = $rows1['dept_id'];
                             if ($i==1){  
                             echo'<dl class="row">
                             <dt>Evaluator Name:</dt>
-                            <dd class="col-sm-4">'.$name1.'<small>('.$username.')</small></dd>
+                            <dd class="col-sm-2">'.$name1.'<small>('.$username.')</small></dd>
                             ';} else {
                                 echo'
                                 <dt >Evaluatee Name:</dt>
-                                <dd class="col-sm-4">'.$name1.'<small>('.$username.')</small></dd>
+                                <dd class="col-sm-2">'.$name1.'<small>('.$username.')</small></dd>
                                 </dl>';
                             }
                         }
                     }
-                        $department ="select name from departments where id='".$deptId."'";
-                        $results_dept = mysqli_query($connection,$department);
-                        if($rows2=mysqli_fetch_assoc($results_dept)){
-                            $departName = ucwords($rows2['name']); 
-                        }
-                    echo'       <dl class="row">
-                                <dt >Designation:</dt>
-                                <dd class="col-sm-4">'.$designation.'</dd>
-                                <dt >Department:</dt>
-                                <dd class="col-sm-4">'.$departName.'</dd>
-                                </dl>';
-
                 ?>
                 <hr>
                 <dl class='row'>
                     <dt class="col col-1">S/N</dt>
-                    <dt class="col col-3">Appraisal Criteria </dt>
+                    <dt class="col col-3">Appraisal Criterias </dt>
                     <dt class="col col-4">Score: </dt>
                 </dl>
                 <?php
@@ -130,34 +110,28 @@ href="../plugins/icheck-bootstrap/icheck-boo../plugins/jqvmap/jqvmap.min.css" />
                     if($row = mysqli_fetch_assoc($col_crit)) {
                         $ac_id= $row['id'];
                         $names = ucwords($row['name']);
-                        echo "<dl class='row'><dt class='col col-1'>{$sn}</dt><dt class='col col-3'>{$names}</dt>";
+                        echo "<dl class='row'><dt class='col col-1'>{$sn}</dt><dt class='col col-3'>{$names}&nbsp:</dt>";
                     }
                     $q2 = "SELECT criteria_id, remark,score, field_name FROM reports WHERE report_id = '$reportId'";
                     $val= mysqli_query($connection,$q2);
                     while($rows=mysqli_fetch_assoc($val)){
                         $score= $rows['score'];
                         $c_id = $rows['criteria_id'];
-                        $result = $rows['field_name'];
                         $remark = $rows['remark'];
                         if($ac_id==$c_id){
-                            echo"<dd class='col-sm-2'>{$score}<span>&nbsp;(<small>{$remark}</small> )</span></dd></dl>";
+                            echo"<dd class='col-sm-2'>{$score}<span>(<small>{$remark}</small> )</dd></dl>";
                         }
                     }
                 }
                 ?>
                 <hr>
                 <dl class='row'>
-                    <dt>Total Score: </dt>
+                    <dt>Total Obtained Score: </dt>
                         <dd class='col-sm-2'><?php echo $total. " out of " . $maxScale; ?></dd>
                     <dt>Average Score: </dt>
                         <dd class='col-sm-2'><?php echo $avg; ?></dd>
-                    <dt>Result: </dt>
-                        <dd class='col-sm-2'><?php echo $result; ?></dd>
-                </dl>
-                <dl class='row'>
                     <dt>Pay Raise: </dt>
-                        <dd class='col-sm-2'><?php echo $payRaise; ?>%</dd>
-                    
+                        <dd class='col-sm-2'><?php echo $payRaise; ?></dd>
                 </dl>
                 <p class="pr-4" style="float: right;"><u>Signature</u><br><small>
                 <?php 
@@ -166,14 +140,12 @@ href="../plugins/icheck-bootstrap/icheck-boo../plugins/jqvmap/jqvmap.min.css" />
                 if($rows=mysqli_fetch_assoc($staff_info)){
                     $staffName = $rows['name'];
                     $designation = $rows['designation'];
-                    echo $staffName.'<br>'.$designation.'('.$departName.')';
+                    echo $staffName.'<br>('.$designation.')';
                 }
                 ?></small>
             </p>
         </div>
-    
         
-    </div>
         <!-- /.card -->
     </div>
     <!-- /.modal-dialog -->
@@ -188,10 +160,10 @@ href="../plugins/icheck-bootstrap/icheck-boo../plugins/jqvmap/jqvmap.min.css" />
         size: A4;
         margin: 0;
     }
-    #card {
-        /* Add shadows to create the "card" effect */
-        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-        transition: 0.3s;
+    #save-btn
+    {
+        display: none;
+        visibility: none;
     }
-</style>
 
+</style>

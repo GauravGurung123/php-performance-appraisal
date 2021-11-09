@@ -59,7 +59,7 @@
                                     <div class='col-sm-2'>
                                     <input type='number' name='{$input_name}' onblur='handleValue(this, {$min}, {$max})' 
                                     class='form-control' onfocus='handleFocus(this)' min='{$min}' max='{$max}'
-                                    id='example{$name}' placeholder='{$min} to {$max}' required>
+                                    id='example{$name}' placeholder='{$min} to {$max}'>
                                     </div>
                                     <label for='examplefbk{$name}' class='col-sm-6 col-form-label'>Remarks</label>
                                     <div class='col-sm-6'>

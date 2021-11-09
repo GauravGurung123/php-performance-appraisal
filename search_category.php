@@ -53,7 +53,7 @@ if(isset($_GET['search'])) {
                                 $value= mysqli_query($connection,$res_query);
                                 echo '<option>'.$orderResult.'</option>';
                                 while ($row = mysqli_fetch_assoc($value)) {
-                                    $remark = $row['remark'];
+                                    $remark = $row['name'];
                                     ?>
                                     <option value="<?php echo $remark; ?>" ><?php echo $remark; ?></option>';
                                     <?php
@@ -109,23 +109,12 @@ if(isset($_GET['search'])) {
                     <th>Created At</th>
                     <th>Evaluator</th>
                     <th>Evaluatee</th>
-                    <?php
-                    $query = "SELECT DISTINCT(criteria_id) as crit_id from reports";
-                    $criterias = mysqli_query($connection, $query);
-                    while($row = mysqli_fetch_assoc($criterias)) {
-                        $critId = $row['crit_id'];
-
-                        $query = "SELECT * from appraisal_criterias WHERE id = '$critId'";
-                        $col_crit = mysqli_query($connection, $query);
-                        if($row = mysqli_fetch_assoc($col_crit)) {
-                            $names = ucwords($row['name']);
-                            echo "<th>{$names}</th>";
-                        }
-                    }
-            ?>
+                    <th>Pay Raise</th>
                     <th>Total Score</th>
-                    <th>Average Score</th>
+                    <th>Avg Score</th>
                     <th>Result</th>
+                    <th>Remark</th>
+                    <th>Action</th>
                     
                 </tr>
                 </thead>
@@ -140,7 +129,7 @@ if(isset($_GET['search'])) {
                 $from = $toFrom['0'];
                 $to = $toFrom['1'];
                 // if(!$orderResult=='-- select result --'){
-                $date_query = "SELECT * FROM reports WHERE ((DATE(created_at) >= '$from' AND DATE(created_at)) <= '$to') AND (result = '$orderResult')  GROUP BY report_id";
+                $date_query = "SELECT * FROM reports WHERE ((DATE(created_at) >= '$from' AND DATE(created_at)) <= '$to') AND (field_name = '$orderResult')  GROUP BY report_id";
                 // } else {
                 // $date_query1 = "SELECT * FROM reports WHERE DATE(created_at) >= '$from' AND DATE(created_at) <= '$to' GROUP BY report_id";
                 // }
@@ -152,22 +141,20 @@ if(isset($_GET['search'])) {
             }
 
             while($row = mysqli_fetch_assoc($search_query)) { 
-                global $sn;
-                ++$sn;            
+                global $sno;
+                ++$sno;            
                 $reportId = $row['report_id'];
                 $reportId = trimWords($reportId);
                 $a1 = $row['evaluator_id'];
                 $a2 = $row['evaluatee_id'];
-                
+                $payRaise = $row['pay_raise'];
+                $remark_r = $row['field_name'];
+                $result = $row['result'];
                 $created_at = $row['created_at'];
                 $created_at = date("M j, Y", strtotime($created_at));
                 echo"<tr>";
                 ?>
-                <td class='text-center'><?php echo $sn; ?>
-                <?php if (checkPermission()): ?>
-                <br><small>
-                <a rel='<?php echo $reportId?>' class='del_link bg-danger p-1' href='javascript:void(0)'>del</a></small> 
-                <?php endif; ?></td>
+                <td><?php echo $sno; ?></td>
                 <?php
                 echo"<td>{$created_at}</td>";
                 for($i=1;$i<3;$i++){
@@ -180,39 +167,8 @@ if(isset($_GET['search'])) {
 
                     }
                 }
-                $addCol = "SELECT COUNT(DISTINCT(criteria_id)) AS count FROM reports";
-                $res = mysqli_query($connection,$addCol);
-                while($rows=mysqli_fetch_assoc($res)){
-                    $tc =  $rows['count'];
-                    $tc1= $tc;
-                    while($tc>=1){
-                
-                        $q2 = "SELECT criteria_id, remark,score FROM reports WHERE report_id = '$reportId'";
-                        $val= mysqli_query($connection,$q2);
-                        $c1=0;
-                        $c2=0;
-                            while($rows=mysqli_fetch_assoc($val)){
-                                $c1=$c1+1; 
-                                $q= $rows['score'];
-                                $r = $rows['remark'];
-                                $r = trimWords($r);
-                                global $g;
-                                if($g){ break; }
-                                $c2=$c2+1;
-                                
-                                echo"<td>{$q}<br>(<small>{$r}</small> )</td>";
-                                
-                            }
-                                
-                            $g=true;
-                            $tc = $tc - 1 - $c2;
-                            if(!($tc1==$c1)){
-                            echo "<td>N/A</td>";
-                            }
-                    }
-                    $g=false;
-                      
-                }
+                echo"<td>{$payRaise}%</td>";
+               
                 $q3 = "SELECT SUM(score) AS total, AVG(score) AS avg, SUM(max_scale) AS scaleScore FROM reports WHERE report_id = '$reportId'";
                 $val2= mysqli_query($connection,$q3);
                 
@@ -220,41 +176,18 @@ if(isset($_GET['search'])) {
                     $total  = $rows['total'];
                     $avg  = round($rows['avg']);
                     $scaleScore = $rows['scaleScore'];
-
-                    $percentage = ($total/$scaleScore)*100;
                     echo"<td>{$total}</td>";
                     echo"<td>{$avg}</td>";
-                    
-                    $remarK_query = "SELECT * FROM remarks";    
-                    $val3= mysqli_query($connection,$remarK_query);
-                    if ($rows = mysqli_fetch_assoc($val3)) {
-                        $twenty  = $rows['twenty'];
-                        $fourty  = $rows['fourty'];
-                        $sixty  = $rows['sixty'];   
-                        $eighty  = $rows['eighty'];
-                        $hundred  = $rows['hundred'];
-                        
-                        switch($percentage) {
-                            case ($percentage<20):
-                                echo"<td>{$twenty}</td>";
-                                break;
-                            case ($percentage>=20 && $percentage <40 ):
-                                echo"<td>{$fourty}</td>";
-                                break;
-                            case ($percentage>=40 && $percentage <60 ):
-                                echo"<td>{$sixty}</td>";
-                                break;
-                            case ($percentage>=60 && $percentage <80 ):
-                                echo"<td>{$eighty}</td>";
-                                break;
-                            default:
-                                echo"<td>{$hundred}</td>";
-                                break;
-
-                        }   
-                        
-                    }
+                    echo"<td>{$remark_r}</td>";
+                    echo"<td>{$result}</td>";
                 }
+                ?>
+                <td><small>
+                <a class='bg-success p-1' target="_blank" href="includes/report_detail.php?report_detail=<?php echo $reportId; ?>">view</a>
+                <?php if (checkPermission()): ?>
+                <a rel='<?php echo $reportId?>' class='del_link bg-danger p-1' href='javascript:void(0)'>del</a></small> 
+                <?php endif; ?></td>
+                <?php 
             }
                 echo"</tr>";
         ?>

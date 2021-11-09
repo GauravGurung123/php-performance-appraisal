@@ -17,9 +17,9 @@
         <li class="nav-item d-none d-sm-inline-block">
         <a href="reports.php" class="nav-link">Reports</a>
         </li>
-        <li class="nav-item d-none d-sm-inline-block">
+        <!-- <li class="nav-item d-none d-sm-inline-block">
         <a href="timelines.php" class="nav-link">Timeline</a>
-        </li>
+        </li> -->
         <li class="nav-item d-none d-sm-inline-block">
         <a href="roles.php" class="nav-link">Roles</a>
         </li>

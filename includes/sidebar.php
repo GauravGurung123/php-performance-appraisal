@@ -96,7 +96,7 @@
             </li>
             <?php if (checkPermission()): ?>
             <li class="nav-item">
-            <a href="config.php" class="nav-link">
+            <a href="config1.php" class="nav-link">
                 <i class="fas fa-chevron-right nav-icon"></i>
                 <p>Config</p>
             </a>

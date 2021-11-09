@@ -46,7 +46,7 @@ if(isset($_GET['source'])) {
 }
 if(!$source=='edit_contact'): ?>               
 
-<div class="col col-4 border-right">
+<div class="col col-5">
     <form action="" method="post" autocomplete="on">
         <div class="card-body">
             <div class="form-group">
@@ -96,12 +96,12 @@ table, td, th, thead {
 }
 </style>
 <!-- /.col col-5 -->
-<div class="col col-8 pl-4">
-    <table class="table">
+<div class="col col-sm-7" style="overflow: scroll">
+    <table class="table" >
     <thead>
         <tr>
         <th style="width: 10px">S.N.</th>
-        <th>Field</th>
+        <th>Result</th>
         <th>Remark</th>
         <th>Salary</th>
         <th>Action</th>
@@ -127,7 +127,7 @@ table, td, th, thead {
             echo"<td>{$salary}%</td>";
 
 
-            echo "<td><small><a class='bg-primary p-1' href='config.php?source=edit_field&edit_field={$id}'>Edit</a>
+            echo "<td><small><a class='bg-primary p-1' href='config1.php?source=edit_field&edit_field={$id}'>Edit</a>
                 <a rel='$id' class='del_link bg-danger p-1' href='javascript:void(0)'>Delete</a></td> </small>";
             echo"</tr>";
 

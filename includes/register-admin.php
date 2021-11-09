@@ -38,6 +38,7 @@
   </head>
 
 <?php
+
 if(isset($_POST['create_user'])){
     $username = trim($_POST['username']);
     $fullname = trim($_POST['fullname']);    
@@ -75,19 +76,29 @@ if(isset($_POST['create_user'])){
   }
 
   if (empty($error)) {
+    $role_query = "INSERT INTO roles(name)";
+    $role_query .= "VALUES('superadmin'),('admin'),('member')";
+    $create_role_query = mysqli_query($connection, $role_query);
     
-      $query = "INSERT INTO staffs(username, name, role_id, designation, password)";
-      $query .= "values('$username', '$fullname', '1', 'superadmin', '$password')";
+    $scale_query = "INSERT INTO scales(minimum, maximum)";
+    $scale_query .= "VALUES(0, 10)";
+    $create_scale_query = mysqli_query($connection, $scale_query);
 
-      $create_user_query = mysqli_query($connection, $query);
-      $log_action = "new user added";
+    $query = "INSERT INTO staffs(username, name, role_id, designation, password)";
+    $query .= "VALUES('$username', '$fullname', '1', 'superadmin', '$password')";
+
+    $create_user_query = mysqli_query($connection, $query);
+    $log_action = "Role updated";
+    create_log($_SERVER['REMOTE_ADDR'], $username, $_SERVER['HTTP_USER_AGENT'], $log_action);
+
+    $log_action = "new user added";
     create_log($_SERVER['REMOTE_ADDR'], $username, $_SERVER['HTTP_USER_AGENT'], $log_action); 
 
-      if(!$create_user_query) {
-        die("QUERY Failed". mysqli_error($connection) );
+    if(!$create_user_query) {
+      die("QUERY Failed". mysqli_error($connection) );
     }
-
-      
+    header('Location: ../index.php');
+    die;
   }
 }
 ?>

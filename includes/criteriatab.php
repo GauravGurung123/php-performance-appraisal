@@ -47,7 +47,7 @@ table, td, th, thead {
 }
 </style>
 <!-- /.col col-5 -->
-<div class="col col-7 pl-4">
+<div class="col col-7 pl-4"  style="overflow: scroll">
     <table class="table">
     <thead>
         <tr>
@@ -81,7 +81,7 @@ table, td, th, thead {
             }  
 
 
-            echo "<td><small><a class='bg-primary p-1' href='config.php?source=edit_criteria&edit_criteria={$id}'>Edit</a>
+            echo "<td><small><a class='bg-primary p-1' href='config1.php?source=edit_criteria&edit_criteria={$id}'>Edit</a>
                     <a rel='$id' class='del_link bg-danger p-1' href='javascript:void(0)'>Delete</a></small></td>";
             echo"</tr>";
 

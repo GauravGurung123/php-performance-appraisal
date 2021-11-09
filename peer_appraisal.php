@@ -64,7 +64,7 @@
                 $f_salary  = $rows['sal'];   
                 
                 if(($percentage > $f_min && $percentage <= $f_max)){
-                    $f_name = $f_name;
+                    $fieldName = $f_name;
                     $result = $f_result;
                     $salary = $f_salary;
                 }
@@ -72,7 +72,7 @@
         }
 
         $query1 = "UPDATE reports SET ";
-        $query1 .="field_name='{$f_name}', result = '{$result}', pay_raise= '{$salary}' ";
+        $query1 .="field_name='{$fieldName}', result = '{$result}', pay_raise= '{$salary}' ";
         $query1 .="WHERE report_id = {$rep_id} ";
         $add_result_query = mysqli_query($connection, $query1);
         if(!$add_result_query) {
@@ -147,7 +147,7 @@
                 $f_salary  = $rows['sal'];   
                 
                 if(($percentage > $f_min && $percentage <= $f_max)){
-                    $f_name=$f_name;
+                    $fieldName=$f_name;
                     $result = $f_result;
                     $salary = $f_salary;
                 }   
@@ -156,7 +156,7 @@
         }
 
         $query1 = "UPDATE reports SET ";
-        $query1 .="field_name='{$f_name}', result = '{$result}', pay_raise= '{$salary}' ";
+        $query1 .="field_name='{$fieldName}', result = '{$result}', pay_raise= '{$salary}' ";
         $query1 .="WHERE report_id = {$rep_id} ";
         $add_result_query = mysqli_query($connection, $query1);
         if(!$add_result_query) {
