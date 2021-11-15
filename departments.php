@@ -10,153 +10,93 @@
 
 
 <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
             <div class="row">
-                <p class="display-4">All departments</p>
+                <?php if (checkPermission()): ?>
+                    <button id="button">Add New</button>
+                    <style>
+                        #newdepart { display: none; }
+                    </style>
+                <script>
+                $("#button").click(function() { 
+                    $("#newdepart").toggle('slow');
+                });
+                </script>
             </div>
-            <?php if(checkPermission()): ?>
-            <button class="btn btn-success"><a class="text-white" href="add_department.php">Add department</a></button>
-            <?php endif;
-if(isset($_GET['source'])) {
-    $source = $_GET['source']; 
-} else {
-    $source = '';
-}
-switch($source) {  
-    case 'edit_department';
-    include "includes/edit_department.php";
-    break;
-    default:
-    // include "users.php";
-    break;
-}
-
-?>
-            <!-- /.row -->
-        <div class="row mt-2">
-        <div class="col-12">
-            <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Show 
-    <select name="page_no" id="">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-    </select> Entries
-</h3> 
-
-                <div class="card-tools">
-                <div class="input-group input-group-sm" style="width: 150px;">
-                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
-
-                    <div class="input-group-append">
-                    <button type="submit" class="btn btn-default">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    </div>
-                </div>
-                </div>
+            <!-- row ended -->
+            <div class="row">
+                <?php include "includes/add_dept_tab.php"; ?>
             </div>
-            <!-- /.card-header -->
-            <div class="card-body">
-                <table id="example2" class="table table-bordered table-hover">
-                <thead>
-                <tr>
-                    <th>S.N.</th>
-                    <th>Department</th>
-            <?php if (checkPermission()): ?>
-                    <th>Action</th>
-                    <?php endif; ?>
-                </tr>
-                </thead>
-                <tbody>
-        <?php
-            $per_page = 4;
-            if (isset($_GET['page'])) {
-                $page = $_GET['page'];
-            } else { $page = ""; }
-
-            if ($page == "" || $page == 1) {
-                $page_1 = 0;
-            } else {
-                $page_1 = ($page * $per_page) - $per_page;
-            }
-
-            $query_count = "SELECT * FROM departments";
-            $do_count = mysqli_query($connection, $query_count);
-            $count = mysqli_num_rows($do_count);
-            $count = ceil($count / $per_page);
-
-            $query = "SELECT * FROM departments LIMIT $page_1, $per_page";
-            $sel_depts = mysqli_query($connection, $query);
-
-            while($row = mysqli_fetch_assoc($sel_depts)) {
-                $id = $row['id'];
-                $name = ucwords($row['name']);
-
-                echo"<tr>";
-                echo"<td>{$id}</td>";
-                echo"<td>{$name}</td>";
-            if (is_superadmin($_SESSION['role_id']) || is_admin($_SESSION['role_id'])){
-                
-                echo "<td><a class='bg-primary p-1' href='departments.php?source=edit_department&edit_department={$id}'>Edit</a>";
-                echo"&nbsp; <a class='bg-danger p-1' href='departments.php?delete={$id}'>Delete</a></td>";
-            }
-                echo"</tr>";
-        }
-        ?>
-                
-                </table>
-                <div class="row mt-3">
-                            <div class="col-sm-12 col-md-5">
-                                <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">
-                                    Showing 1 to 4 of 15 entries
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-7">
-                                <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
-
-                                    <ul class="pagination">
-
-<?php
-    for ($i=1; $i<=$count; $i++) {
-        if ($i == $page ){
-        echo "<li class='paginate_button page-item active'><a class='page-link active' href='staffs.php?page={$i}'>{$i}</a>";
-        } else {
-        echo "<li class='paginate_button page-item'><a class='page-link' href='staffs.php?page={$i}'>{$i}</a>";
-       
-        }
-    }
-?>
-  </ul>
-                                </div>
-                            </div>
-                        </div> 
-<!-- ./row mt-3 -->
-
-
-            </div>
-            <!-- /.card-body -->
-        </div>
-        </div>
-        <!-- /.card -->
-        </div>
-        </div>
-        <!-- /.row -->
+                <?php endif; ?>
+            
+            <?php  include "includes/dept_list_tab.php"; ?>      
         </div>
         <!-- /.container-fluid -->
-        </div>
-        <!-- /.content-header -->
-
-
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
+    <!-- /.content-header -->
+</div>
+<!-- /.content-wrapper -->
 
 <?php include "includes/footer.php" ?>
+<?php include("includes/modal_delete.php"); ?>
+<?php include ("includes/modal_department_staff.php"); ?>
+
+
+<script>
+  $(document).ready(function(){
+        $(".del_link").on('click', function(){
+            var delId1 = $( this).attr("rel");
+            var delUrl1 = "departments.php?delete="+ delId1 +" ";
+
+            $(".modal_del_link").attr("href", delUrl1);
+            $("#modal-sm").modal('show');
+            
+        });
+    
+        // $(".show_depart").on('click', function(){
+            // var showIds = ;
+            // var showIds = $(this).data("id");
+            // $.ajax
+            // ({
+            //     type: "POST",
+            //     url: "includes/modal_department_staff.php",
+            //     data: showIds,
+            //     success: function(data)
+            //     {
+            //         // $("#modal-lg").html('data');
+            //         $("#modal-lg").modal('show');
+
+            //         console.log(data);
+            //     }
+            // });
+            // function getdata(){
+            //     $.ajax({
+            //         url: 'includes/modal_department_staff.php',
+            //         success: function(response)
+            //         {
+            //             $('#getdata').html(response);
+            //         }
+            //     })
+            // }
+            // $(".show_depart").attr("href", showUrls);
+        });
+
+  });
+  
+$(function() {
+    $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+    localStorage.setItem('lastTab', $(this).attr('href'));
+    });
+    var lastTab = localStorage.getItem('lastTab');
+
+    if (lastTab) {
+    $('[href="' + lastTab + '"]').tab('show');
+    }  
+});
+</script>
 <?php
 //delete department query
 if(isset($_GET['delete'])) {

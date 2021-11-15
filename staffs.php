@@ -17,8 +17,21 @@
                 <p class="display-4">All staffs</p>
                 <?php include("includes/modal_delete.php"); ?>
             </div>
+            
             <?php if (checkPermission()): ?>
-            <button class="btn btn-success"><a class="text-white" href="add_staff.php">Add staff</a></button>
+            
+            
+            <button id="button">Add staff</button>
+            <style>
+                #newpost { display: none; }
+            </style>
+            <script>
+             $("#button").click(function() { 
+                // assumes element with id='button'
+                $("#newpost").toggle('slow');
+            });
+            </script>
+            <?php include "add_staff.php"; ?>
             <?php endif; ?>
 <?php
 if(isset($_GET['source'])) {
@@ -66,7 +79,7 @@ switch($source) {
                 </div>
             </div>
             <!-- /.card-header -->
-            <div class="card-body">
+            <div class="card-body" style="overflow: scroll">
                 <table id="myTable" class="table table-bordered table-hover">
                 <thead>
                 <tr>
@@ -78,6 +91,7 @@ switch($source) {
                     <th>S/N</th>
                     <th>Username</th>
                     <th>Full Name</th>
+                    <th>Department</th>
                     <th>Designation</th>
             <?php if (checkPermission()): ?>
                     <th>Role</th>
@@ -109,6 +123,7 @@ switch($source) {
             while($row = mysqli_fetch_assoc($sel_staffs)) {
                 $id = $row['id'];
                 $role_id = $row['role_id'];
+                $dept_id = $row['dept_id'];
                 global $sid;
                 ++$sid;
                 $username = $row['username'];
@@ -120,10 +135,16 @@ switch($source) {
                 if($rows = mysqli_fetch_assoc($sel_role)){
                     $roleName = ucwords($rows['name']);
                 }
+                $query_dept = "SELECT * FROM departments WHERE id='$dept_id'";
+                $sel_dept = mysqli_query($connection, $query_dept);
+                if($rows = mysqli_fetch_assoc($sel_dept)){
+                    $deptName = ucwords($rows['name']);
+                }
                 ?><tr class="<?php if($roleName=='Admin') echo "bg-info";  ?>"><?php
                 echo"<td>{$sid}</td>";
                 echo"<td>{$username}</td>";
                 echo"<td>{$name}</td>";
+                echo"<td>{$deptName}</td>";
                 echo"<td>{$designation}</td>";
             if (checkPermission()){
                 echo"<td>{$roleName}</td>";

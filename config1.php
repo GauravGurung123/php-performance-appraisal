@@ -7,43 +7,53 @@
 <?php include_once "includes/sidebar.php" ?>
 <!-- /.sidebar -->
 <?php
-  if(isset($_POST['create_criteria'])){
-    $criteriaName = trim($_POST['criteria_name']);
+  // if(isset($_POST['create_criteria'])){
+// if ($_POST['idCriteria']!=""){
+//     $criteriaName = trim($_POST['idCriteria']);
     
-  $error = [
-      'criteriaName'=> '',
-  ];
+//   $error = [
+//       'criteriaName'=> '',
+//   ];
 
-  if (strlen($criteriaName) < 2) {
-    $error['criteriaName'] = 'criteria name cannot be less than 2 characters <hr color="red">';
-  }
-  if (criteria_exists($criteriaName)) {
-    $error['criteriaName'] = 'criteria name already exists, pick another one <hr color="red">';
-  }
+//   if (strlen($criteriaName) < 2) {
+//     $error['criteriaName'] = 'criteria name cannot be less than 2 characters <hr color="red">';
+//   }
+//   if (criteria_exists($criteriaName)) {
+//     $error['criteriaName'] = 'criteria name already exists, pick another one <hr color="red">';
+//   }
 
-  foreach ($error as $key => $value) {
-      if (empty($value)) {
-      unset($error[$key]);
-      }
-  }
+//   foreach ($error as $key => $value) {
+//       if (empty($value)) {
+//       unset($error[$key]);
+//       }
+//   }
 
-  if (empty($error)) {
+//   if (empty($error)) {
       
-      $query = "INSERT INTO appraisal_criterias(name)";
-      $query .= "values('$criteriaName')";
+//       $query = "INSERT INTO appraisal_criterias(name)";
+//       $query .= "values('$criteriaName')";
 
-      $create_criteria_query = mysqli_query($connection, $query);
-      $log_action = "new criteria added";
-    create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
+//       $create_criteria_query = mysqli_query($connection, $query);
+//       $log_action = "new criteria added";
+//     create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
 
-      if(!$create_criteria_query) {
-        die("QUERY Failed". mysqli_error($connection) );
-    }
-    header('Location: '.$_SERVER['PHP_SELF']);
-    die;
-    
-  }
-}
+//       if(!$create_criteria_query) {
+//         die("QUERY Failed". mysqli_error($connection) );
+//     }
+//     header('Location: '.$_SERVER['PHP_SELF']);
+//     die;
+//     if($criteriaName){
+//       echo "<span style='color:green; font-weight:bold;'>
+//       Thank you for contacting us, we will get back to you shortly.
+//       </span>";
+//     }
+//     else{
+//       echo "<span style='color:red; font-weight:bold;'>
+//       Sorry! Your form submission is failed.
+//       </span>";
+//       } 
+//   }
+// }
 ?>
 <?php
   if(isset($_POST['create_range'])) {
@@ -72,23 +82,20 @@
         $field_exist_query = "INSERT INTO fields_range(field_id, minimum, maximum, result_id)";
         $field_exist_query .= "VALUES('$field_id', '$minimum_n', '$maximum_n', '$res_id')";
         $update_result_query = mysqli_query($connection, $field_exist_query);
-  
+      }else {
+        $field_query = "INSERT INTO fields_range(field_id, minimum, maximum, result_id)";
+        $field_query .= "VALUES('$field_id', '$minimum', '$maximum', '$res_id')";
+        $create_result_query = mysqli_query($connection, $field_query);
       }
-      
-
     }
-    if(!$min=null){
-      $field_query = "INSERT INTO fields_range(field_id, minimum, maximum, result_id)";
-      $field_query .= "VALUES('$field_id', '$minimum', '$maximum', '$res_id')";
-      $create_result_query = mysqli_query($connection, $field_query);
-    }?><?php
+    ?><?php
     $log_action="range created";
     create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action);
 
     header('Location: '.$_SERVER['PHP_SELF']);
     die;
   } 
-?>
+?>                     
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -98,7 +105,7 @@
 
 
 <div class="row">
-    <div class="col col-12">
+    <div class="col col-sm-12">
         <div class="card card-primary card-outline card-outline-tabs">
             <div class="card-header p-0 border-bottom-0">
                 <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
@@ -121,12 +128,12 @@
                     </div>
                     <div class="tab-pane fade active show" id="custom-tabs-four-result" role="tabpanel" aria-labelledby="custom-tabs-four-result-tab">
                         <div class="row">    
-                            <div class="col col-sm-7"> 
+                            <!-- <div class="col col-sm-7">  -->
                             <?php include "includes/rangetab.php"; ?>
-                            </div>
+                            <!-- </div>
                             <div class="col col-sm-5"> 
-                            <?php include "includes/resulttab.php"; ?>
-                            </div>
+                            <?php  // include "includes/resulttab.php"; ?>
+                            </div> -->
                         </div>
                     </div>
                     <div class="tab-pane fade" id="custom-tabs-four-scale" role="tabpanel" aria-labelledby="custom-tabs-four-scale-tab">
@@ -139,7 +146,7 @@
         </div>
         <!-- card card-primary ended -->
     </div>
-    <!-- col col-12 ended -->
+    <!-- col col-sm-12 ended -->
 </div>
 <!-- row ended -->
 
@@ -159,6 +166,15 @@
           var delId1 = $(this).attr("rel");
           var delUrl1 = "config1.php?delete="+ delId1 +" ";
 
+          $(".modal_del_link").attr("href", delUrl1);
+
+          $("#modal-sm").modal('show');
+          
+      });
+      $(".del_field_link").on('click', function(){
+          var delId1 = $(this).attr("rel");
+          var delUrl1 = "config1.php?delete_field="+ delId1 +" ";
+          
           $(".modal_del_link").attr("href", delUrl1);
 
           $("#modal-sm").modal('show');
@@ -191,6 +207,17 @@ if(isset($_GET['delete'])) {
     $del_report_query = mysqli_query($connection, $query);
     header('Location: '.$_SERVER['PHP_SELF']);
     die;
+}
+//delete field query
+if(isset($_GET['delete_field'])) {
+  $log_action="criteria deleted";
+  $the_id = mysqli_real_escape_string($connection,$_GET['delete_field']);
+
+  $query = "DELETE FROM fields where id = '{$the_id}'";
+  create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
+  $del_report_query = mysqli_query($connection, $query);
+  header('Location: '.$_SERVER['PHP_SELF']);
+  die;
 }
 ?>
 <?php else: ?>

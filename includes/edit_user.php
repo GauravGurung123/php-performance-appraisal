@@ -5,24 +5,31 @@
         $query = "SELECT * FROM staffs where id = $the_user_id ";
         $sel_users_query = mysqli_query($connection, $query);
 
-    while($row = mysqli_fetch_assoc($sel_users_query)) {
-        $user_id = $row['id'];
-        $username = $row['username'];
-        $name = $row['name'];
-        $designation = $row['designation'];
-        $roleId = $row['role_id'];
-        
-    }
+        if($row = mysqli_fetch_assoc($sel_users_query)) {
+            $user_id = $row['id'];
+            $username = $row['username'];
+            $name = $row['name'];
+            $designation = $row['designation'];
+            $roleId = $row['role_id'];
+            $deptId = $row['dept_id'];
+        }
+        $query_depart = "SELECT * FROM departments where id = $deptId ";
+        $sel_depart_query = mysqli_query($connection, $query_depart);
 
+        if($row = mysqli_fetch_assoc($sel_depart_query)) {
+            $departmentID = $row['id']; 
+            $departmentName = $row['name']; 
+        }
     }
     if(isset($_POST['edit_user'])) {
         $username = $_POST['username'];
         $name = $_POST['fullname'];
         $designation = $_POST['designation'];
+        $department = $_POST['department'];
         $user_role = $_POST['user_role'];
         echo $user_role;
 
-        $query = "UPDATE staffs SET username = '{$username}', name = '{$name}', role_id = '$user_role', designation = '{$designation}' WHERE staffs.id = {$the_user_id} ";
+        $query = "UPDATE staffs SET username = '{$username}', name = '{$name}', role_id = '$user_role', dept_id = '$department', designation = '{$designation}' WHERE staffs.id = {$the_user_id} ";
         $log_action="User profile updated"; 
         create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action);
 
@@ -31,6 +38,7 @@
         header('Location: '.$_SERVER['PHP_SELF']);
         die;
     }
+
 
 ?>
 
@@ -50,6 +58,22 @@
                     <input type="text" class="form-control" id="examplefullname" name="fullname" value="<?php echo $name; ?>">
                     <small><?php echo isset($error['username']) ? $error['username'] : '' ?></small> 
                     </div>
+                    <div class="form-group col-sm-4">
+                      <label for="exampleDesignation">Department</label>
+                      <select name="department" class="form-control">
+                        <option value="<?php echo $departmentID; ?>"><?php echo $departmentName;?></option>';
+                          <?php
+                          $query_role1 = "SELECT * FROM departments ";
+                          $sel_role1 = mysqli_query($connection, $query_role1);
+                          while($row = mysqli_fetch_assoc($sel_role1)) {
+                              $id = $row['id'];
+                              $deptName = $row['name'];?>
+                            <option value="<?php echo $id; ?>"><?php echo $deptName;?></option>';
+                              <?php
+                          }
+                          ?> 
+                        </select>
+                      </div>
                     <div class="form-group col-4">
                     <label for="exampleDesignation">Designation</label>
                     <input type="text" class="form-control" id="exampleDesignation" name="designation" value="<?php echo $designation; ?>">

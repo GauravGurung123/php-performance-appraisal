@@ -50,7 +50,7 @@
                 <input type="number" class="form-control" name="salary_name" min="0" max="100" value="<?php echo $salary; ?>">
             </div>
             <button type="submit" id="submit" name="edit_field" class="btn btn-sm btn-primary">Save</button>
-            <a href="config.php" class="btn btn-sm btn-danger">Cancel</a>
+            <a href="config1.php" class="btn btn-sm btn-danger">Cancel</a>
             
         </div>
     <!-- /.card-body -->

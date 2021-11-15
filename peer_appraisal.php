@@ -23,20 +23,18 @@
         $sel_all_post2 = mysqli_query($connection, $query2);
         if ($rows_max = mysqli_fetch_assoc($sel_all_post2)) {
             $maxScale  = $rows_max['maximum'];
-            // $maxScale = $maxScale;
             $minScale  = $rows_max['minimum'];
-            // $minScale = $minScale;
             $maxScale = $maxScale-$minScale;
         }
         $rep_id = hexdec(uniqid()); 
         while($row_r = mysqli_fetch_assoc($criterias)) {
-            var_dump($criterias);
+            // var_dump($criterias);
             $id = $row_r['id'];
-            $names = $row_r['name'];
+            $names = strtok($row_r['name'], " ");
             $comment = 'comment'.$names;
             $score= intval($_POST[$names]);
             $remark= trim($_POST[$comment]);
-            
+            // die();    
             $query = "INSERT INTO reports(report_id, criteria_id, evaluator_id, evaluatee_id, score, remark, max_scale)";
             $query .= "VALUES('$rep_id', '$id', '$evaluatorId', '$evaluateeId', '$score', '$remark', '$maxScale')";
             $add_report_query = mysqli_query($connection, $query);
@@ -111,9 +109,8 @@
         while($row = mysqli_fetch_assoc($criterias)) {
             $id = $row['id'];
             
-            $names = ucwords($row['name']);
+            $names = strtok($row_r['name'], " ");
             $comment = 'comment'.$names;
-                
             $score= intval($_POST[$names]);
             $remark= trim($_POST[$comment]);
             
@@ -173,14 +170,6 @@
 
     } 
 ?>
-<!-- <script>
-    window.onpageshow = function() {
-        if (typeof window.performance != "undefined"
-            && window.performance.navigation.type === 0) {
-            $('#modal-lg').modal('show');
-        }
-    }
-</script> -->
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -232,10 +221,8 @@
 <script>
     
     function handleValue(e, minimum, maximum, demo){
-        if (e.value < minimum || e.value > maximum){ 
+        if ((!e.value==null) && e.value < minimum || e.value > maximum){ 
         e.style.borderColor = 'red';
-        // document.getElementById("demo").innerHTML = "You wrote: ";   
-
         } else {
             e.style.borderColor = 'green'; 
         }

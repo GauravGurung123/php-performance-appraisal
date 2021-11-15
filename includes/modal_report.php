@@ -135,7 +135,7 @@ if(isset($_GET['retrieve'])) {
         </div>
         <div class="modal-footer justify-content-between">
             <a href="reports.php" class="btn btn-danger">Cancel</a>
-            <a href="" class="btn btn-default modal_download_rep" style="float: right;">Download report</a>
+            <a href="" onclick="window.print();" class="btn btn-default modal_download_rep" style="float: right;">Download report</a>
         </div>
         </div>
         <!-- /.modal-content -->

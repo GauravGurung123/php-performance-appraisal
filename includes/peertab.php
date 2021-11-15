@@ -46,6 +46,7 @@
                                 while($row = mysqli_fetch_assoc($sel_criterias)) {
                                     // $id = $row['id'];
                                     $input_name = $row['name'];
+                                    $input_name = strtok($input_name, " ");
                                     $name = ucwords($row['name']);
                                     $query = "SELECT * FROM scales";
                                     $sel_scl = mysqli_query($connection, $query);

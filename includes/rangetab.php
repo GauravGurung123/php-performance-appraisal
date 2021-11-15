@@ -45,15 +45,31 @@ if(isset($_GET['source'])) {
     $source = $_GET['source']; 
 }
 if(!$source=='edit_contact'): ?>               
-
+<style>
+input {
+    height:10%;
+    width:50%;
+}
+    </style>
 <div class="col col-5">
     <form action="" method="post" autocomplete="on">
+        <small>
         <div class="card-body">
             <div class="form-group">
                 <label for="exampleCriteria">Result Name</label>
                 <input type="text" class="form-control" id="exampleCriteria" name="field_name" placeholder="new result name">
                 <small><?php echo isset($error['criteriaName']) ? $error['criteriaName'] : '' ?></small>
             </div>
+            <i class="text-danger">please set a standard range</i>
+
+            <div class="row" >
+            <div class="col-sm-6">
+              <input type="number" class="form-control" id="exampleMinimum" name="mini" placeholder="minimum">
+            </div>
+            <div class="col-sm-6">
+                <input type="number" class="form-control" id="exampleMaximum" name="maxi"  placeholder="maximum">
+            </div>
+        </div>
             <div class="form-group">
                 <label for="exampleCriteria">Overall Remark</label>
                 <input type="text" class="form-control" id="exampleCriteria" name="remark_name" placeholder="remark for overall result">
@@ -66,6 +82,7 @@ if(!$source=='edit_contact'): ?>
             <button type="submit" id="submit" name="create_field" class="btn btn-sm btn-primary">Add New</button>
             
         </div>
+        </small>
     <!-- /.card-body -->
     </form>
     
@@ -128,7 +145,7 @@ table, td, th, thead {
 
 
             echo "<td><small><a class='bg-primary p-1' href='config1.php?source=edit_field&edit_field={$id}'>Edit</a>
-                <a rel='$id' class='del_link bg-danger p-1' href='javascript:void(0)'>Delete</a></td> </small>";
+                <a rel='$id' class='del_field_link bg-danger p-1' href='javascript:void(0)'>Delete</a></td> </small>";
             echo"</tr>";
 
         }?>         

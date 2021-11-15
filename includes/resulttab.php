@@ -85,6 +85,7 @@ input{
   <!-- if field is updated  -->
   <?php if(!(field_exists())): ?>
     <form action="config1.php" method="post">
+    <p style="margin-bottom: -5px; color:red;">Note: set 0% to 100% only </p>
       <div class="card-body">
       <?php
         // while($row = mysqli_fetch_assoc($fields_id_query)) {

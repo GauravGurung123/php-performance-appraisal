@@ -245,6 +245,15 @@ $(document).ready(function(){
         $("#modal-sm").modal('show');
         
     });
+    $(".del_field_link").on('click', function(){
+          var delId1 = $(this).attr("rel");
+          var delUrl1 = "config1.php?delete_field="+ delId1 +" ";
+          
+          $(".modal_del_link").attr("href", delUrl1);
+
+          $("#modal-sm").modal('show');
+          
+      });
 });
 
 $(document).ready(function(){
@@ -303,15 +312,22 @@ $(document).ready(function(){
 if(isset($_GET['delete'])) {
     $log_action="report deleted";
     $the_id = mysqli_real_escape_string($connection,$_GET['delete']);
-    // var_dump($the_id);
-    // exit;
-
     $query = "DELETE FROM reports where report_id = '{$the_id}'";
     create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
     $del_report_query = mysqli_query($connection, $query);
     header('Location: '.$_SERVER['PHP_SELF']);
     die;
-
+//delete field query
+if(isset($_GET['delete_field'])) {
+    $log_action="field deleted";
+    $the_id = mysqli_real_escape_string($connection,$_GET['delete_field']);
+  
+    $query = "DELETE FROM fields where id = '{$the_id}'";
+    create_log($_SERVER['REMOTE_ADDR'], $_SESSION['username'], $_SERVER['HTTP_USER_AGENT'], $log_action); 
+    $del_report_query = mysqli_query($connection, $query);
+    header('Location: '.$_SERVER['PHP_SELF']);
+    die;
+  }
 }
 
 ?>
